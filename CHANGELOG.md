@@ -1,3 +1,8 @@
+## 1.0.0-alpha.2+2
+
+* Update Readme
+* Add Screenshots.
+
 ## 1.0.0-alpha.2+1
 
 * Update ```environment``` in pubspec.yaml

@@ -1,12 +1,12 @@
 [![Pub Version](https://img.shields.io/pub/v/update_center?color=orange)](https://pub.dev/packages/update_center)
 
-# ![UpdateCenter Icon](./assets/ic_uc.png) Update Center
+# ![UpdateCenter Icon](https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/ic_uc.png) Update Center
 
 ## Flutter plugin that allows you to implement multi-check for updates for different platforms Android, IOS, Windows.
 
 # IMPORTANT INFORMATION! ⚠
 
-## This plugin is under active development and many features have not yet been implemented. The plugin now works well with Android and Windows, you can now use the plugin for these platforms. IOS is partially implemented, but it can also work, but improvements are needed. Loading progress for MaterioaAlertDialog has not been implemented yet. Also for Windows in the future the window design will be changed to fluent_ui but material support will remain. I couldn’t check the functionality of the IOS plugin because I don’t have access to an iPhone or Mac Book, but in theory it should work just you can check the functionality of IOS in your project and if you find bugs, write to this mail support@sunsetgram.com or add a comment to issues in the github project https://github.com/Smolla-ITc/update_center/issues.
+## This plugin is under active development and many features have not yet been implemented. The plugin now works well with Android and Windows, you can now use the plugin for these platforms. IOS is partially implemented, but it can also work, but improvements are needed. MateriaAlertDialog loading progress is not yet implemented. Also for Windows in the future the window design will be changed to fluent_ui, but material support will remain. Downloads and checking via sha256checksum are not yet implemented. I was not able to check the functionality of the IOS plugin, since I do not have access to an iPhone or Mac Book, but in theory it should work, you just can check the functionality of the IOS plugin in your project and If you find errors, write to this mail support@sunsetgram.com or add a comment to the issues in the github project https://github.com/Smolla-ITc/update_center/issues.
 
 # What has been implemented so far.
 
@@ -18,6 +18,9 @@
 - Once the download is complete, the files themselves open in supported formats. In Windows zip and exe and also any file. And Android is similar.
 - And there is also flexible customization of the plugin, see example below. These are not all the settings many more settings will be added in the future.
 
+## Screenshots android (Windows is identical to android)
+<img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-alert-dialog-m3.png" width="300" alt="image-alert-dialog-m3"/> <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-bottom-sheet-m3.png" width="300" alt="image-bottom-sheet-m3"/> <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-download-bottom-shet-m3.png" width="300" alt="image-download-bottom-sheet-m3"/>
+
 # Getting started
 
 The plugin works with a Json file so make sure you have somewhere to place this file.
@@ -26,7 +29,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^1.0.0-alpha.2+1
+  update_center: ^1.0.0-alpha.2+2
 ```
 
 ## Json file structure

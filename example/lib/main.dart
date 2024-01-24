@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:update_center/update_center.dart';
 
 void main() {
-  runApp(const MaterialApp(home: MyApp()));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -24,10 +24,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       // theme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Update Center v1.0.0-alpha.1'),
+          title: const Text('Update Center v1.0.0-alpha.2+2'),
         ),
         body: Center(
             child: OutlinedButton(
@@ -42,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     // Main plugin settings
     updateCenter = UpdateCenter(
       context: context,
-      urlJson: 'https://example.com/UpdateCenter/update_center.json', // URL to get JSON data for updates (replace with yours)
+      urlJson: 'https://example.com/v1/UpdateCenter/update_center.json', // URL to get JSON data for updates (replace with yours)
       versionName: '', // Name of the current version of your application (You can fill it with any text or leave it so that the data is shown from the json file)
       changeLog: '', // Same here as versionName
 
