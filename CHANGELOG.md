@@ -1,3 +1,7 @@
+## 1.0.0-alpha.2+1
+
+* Update ```environment``` in pubspec.yaml
+
 ## 1.0.0-alpha.2
 
 * Update Readme
