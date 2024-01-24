@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:update_center/utils/download_utils.dart';
 import 'package:update_center/update_center.dart';
 
-
+/// Bottom sheet material is used to display update download progress
 class DownloadProgressBottomSheets extends StatelessWidget {
   final DownloadState downloadState;
 

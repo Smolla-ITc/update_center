@@ -9,8 +9,19 @@ import '../models/windows.dart';
 import 'dialog_provider.dart';
 import 'memory_provider.dart';
 
+/// The CheckProvider class is responsible for handling update checks for different platforms.
 class CheckProvider {
 
+  /// Checks for an available update for Android platform and shows update dialog if necessary.
+  ///
+  /// [androidData] - Data containing update details for Android.
+  /// [packageInfo] - Current app package information.
+  /// [withDialog] - Flag to show dialog if true.
+  /// [allowSkip] - Flag to allow skipping the update.
+  /// [context] - Current BuildContext.
+  /// [downloadState] - State manager for download progress.
+  /// [config] - Configuration settings for the update.
+  /// [downloadUrl] - URL to download the update.
    Future<bool> checkAndroidUpdate(
       Map<String, dynamic> androidData,
       PackageInfo packageInfo,
@@ -69,7 +80,10 @@ class CheckProvider {
     return false; // No update available
   }
 
-
+   /// Checks for an available update for iOS platform and shows update dialog if necessary.
+   ///
+   /// [iosData] - Data containing update details for iOS.
+   /// Similar parameters as checkAndroidUpdate.
    Future<bool> checkIOSUpdate(
       Map<String, dynamic> iosData,
       PackageInfo packageInfo,
@@ -120,7 +134,9 @@ class CheckProvider {
     return false; // No update available
   }
 
-
+   /// Checks for an available update for Windows platform and shows update dialog if necessary.
+   ///
+   /// [windowsData] - Data containing update details for Windows.
    Future<bool> checkWindowsUpdate(
       Map<String, dynamic> windowsData,
       PackageInfo packageInfo,

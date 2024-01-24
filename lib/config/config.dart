@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 
+/// Config for the plugin
 class UpdateCenterConfig {
   // Global Configuration
   final bool isCheckStart;

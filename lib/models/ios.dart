@@ -1,3 +1,4 @@
+/// json model for ios
 class IOSModel {
   String versionName, changeLog, sourceUrl;
   int versionCode, minSupport;

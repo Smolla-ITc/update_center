@@ -5,10 +5,18 @@ import 'package:http/http.dart' as h;
 import 'package:update_center/provider/memory_provider.dart';
 import 'package:update_center/provider/notification_provider.dart';
 import 'package:update_center/config/config.dart';
-
 import '../utils/download_utils.dart';
 
+/// Provides functionality to handle the download process for updates.
 class DownloadProvider {
+
+  /// Downloads an update for Android platform.
+  ///
+  /// [url] - URL of the file to be downloaded.
+  /// [versionName] - Name of the version to be downloaded.
+  /// [onProgress] - Callback function to handle progress updates.
+  /// [config] - Configuration settings for the update process.
+  /// [downloadState] - State of the download process.
   static Future<void> downloadUpdateAndroid(
       String url,
       String versionName,
@@ -36,8 +44,8 @@ class DownloadProvider {
     var fileStream = file.openWrite();
 
     response.stream.listen(
-      (List<int> newBytes) {
-          notificationProvider.cancelNotification(1000);
+          (List<int> newBytes) {
+        notificationProvider.cancelNotification(1000);
         bytesDownloaded += newBytes.length;
         fileStream.add(newBytes);
 
@@ -49,12 +57,12 @@ class DownloadProvider {
         downloadState.progress.value =
             currentProgress; // currentProgress is a value between 0.0 and 1.0
         downloadState.progressText.value =
-            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+        "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
         if (currentProgress - lastNotifiedProgress >= 0.02 ||
             currentProgress == 1.0) {
-            notificationProvider.showDownloadProgressNotification(contentLength, bytesDownloaded, versionName);
+          notificationProvider.showDownloadProgressNotification(contentLength, bytesDownloaded, versionName);
 
           lastNotifiedProgress = currentProgress;
         }
@@ -64,19 +72,20 @@ class DownloadProvider {
         await fileStream.close();
         downloadState.isDownloading.value = false;
         await OpenFilex.open(fileName);
-          notificationProvider.cancelNotification(900);
+        notificationProvider.cancelNotification(900);
       },
       onError: (e) async {
         await fileStream.close();
         downloadState.isDownloading.value = false;
-          notificationProvider.cancelNotification(900);
-          notificationProvider.showDownloadFailedNotification(versionName);
+        notificationProvider.cancelNotification(900);
+        notificationProvider.showDownloadFailedNotification(versionName);
         log(e, name: 'Update Center');
       },
       cancelOnError: true,
     );
   }
 
+  /// Same as Android only for Windows
   static Future<void> downloadUpdateWindows(
       String url,
       String versionName,

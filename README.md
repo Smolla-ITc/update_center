@@ -1,12 +1,12 @@
-[![Pub Version](https://img.shields.io/pub/v/visual_cache?color=orange)](https://pub.dev/packages/update_center)
+[![Pub Version](https://img.shields.io/pub/v/update_center?color=orange)](https://pub.dev/packages/update_center)
 
-# update_center
+# ![UpdateCenter Icon](./assets/ic_uc.png) Update Center
 
 ## Flutter plugin that allows you to implement multi-check for updates for different platforms Android, IOS, Windows.
 
 # IMPORTANT INFORMATION! ⚠
 
-# This plugin is under active development and many features are not yet completed. The plugin now works well with Android and Windows, for now you can use the plugin for these platforms. IOS is partially implemented, but it can also work, but improvements are needed.
+## This plugin is under active development and many features have not yet been implemented. The plugin now works well with Android and Windows, you can now use the plugin for these platforms. IOS is partially implemented, but it can also work, but improvements are needed. Loading progress for MaterioaAlertDialog has not been implemented yet. Also for Windows in the future the window design will be changed to fluent_ui but material support will remain. I couldn’t check the functionality of the IOS plugin because I don’t have access to an iPhone or Mac Book, but in theory it should work just you can check the functionality of IOS in your project and if you find bugs, write to this mail support@sunsetgram.com or add a comment to issues in the github project https://github.com/Smolla-ITc/update_center/issues.
 
 # What has been implemented so far.
 
@@ -18,7 +18,6 @@
 - Once the download is complete, the files themselves open in supported formats. In Windows zip and exe and also any file. And Android is similar.
 - And there is also flexible customization of the plugin, see example below. These are not all the settings many more settings will be added in the future.
 
-
 # Getting started
 
 The plugin works with a Json file so make sure you have somewhere to place this file.
@@ -27,7 +26,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^latest_version
+  update_center: ^1.0.0-alpha.2
 ```
 
 ## Json file structure
@@ -104,9 +103,9 @@ dependencies:
 Paste these lines into the file if you don't have them.
 
 ```xml
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
 
 ## Now initialize the plugin in your file, preferably in initState.
@@ -156,10 +155,10 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Update Center v1.0.0-alpha.1'),
         ),
         body: Center(
-            child: OutlinedButton(
-              onPressed: () => checkUpdate(), // You can check for updates using the button
-              child: const Text('Check update'),
-            )),
+                child: OutlinedButton(
+                  onPressed: () => checkUpdate(), // You can check for updates using the button
+                  child: const Text('Check update'),
+                )),
       ),
     );
   }

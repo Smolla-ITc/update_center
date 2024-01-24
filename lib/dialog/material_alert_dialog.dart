@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/config.dart';
 
+/// Alert dialog material is used to display the update
 class MaterialAlertDialog extends StatelessWidget {
 
   final String versionName;

@@ -12,60 +12,68 @@ import 'config/config.dart';
 export 'config/config.dart';
 export 'utils/constants.dart';
 
+/// The main class responsible for checking and handling updates.
 class UpdateCenter {
+  /// Keeps track of the current download state.
   DownloadState downloadState = DownloadState();
 
+  /// Constructor to initialize the UpdateCenter with necessary parameters.
   UpdateCenter({
-    required this.context,
-    required this.urlJson,
-    required this.changeLog,
-    required this.versionName,
-    required this.config,
-    this.allowSkip = true,
-    this.delay,
+    required this.context, // The context from which this instance is created.
+    required this.urlJson, // The URL to fetch update JSON data.
+    required this.changeLog, // The changelog for the update.
+    required this.versionName, // The version name of the update.
+    required this.config, // Configuration settings for UpdateCenter.
+    this.allowSkip = true, // Flag to allow skipping the update.
   }) {
+    // If set in config, automatically check for updates after the first frame is rendered.
     if (config.isCheckStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        check(); // Call check method after the frame is rendered
+        check();
       });
     }
+    // Initialize notification provider with the configuration.
     var notificationProvider = NotificationProvider(config: config);
     WidgetsFlutterBinding.ensureInitialized();
     notificationProvider.initialize();
   }
 
   final BuildContext context;
-
   final String urlJson;
-
   String changeLog;
-
   String versionName;
-
   bool allowSkip;
-
-  final Duration? delay;
-
   final UpdateCenterConfig config;
 
+  /// For testing purposes, allows mocking of the platform.
   @visibleForTesting
   static Platform platform = const LocalPlatform();
 
+  /// URL for downloading the update.
   String downloadUrl = '';
 
+  /// Checks for updates based on the current platform and configuration.
   Future<bool> check({withDialog = true}) async {
+    // Retrieve package information.
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
     try {
+      // Fetch update information from the specified URL.
       h.Response response = await h.get(Uri.parse(urlJson));
 
+      // Handle cases where the response body is empty.
       if (response.body.isEmpty) {
-        return false; // Handle empty response body
+        return false;
       }
 
+      // Decode the JSON response.
       Map<String, dynamic> data = jsonDecode(response.body.toString());
 
+      // Ensure the context is still valid.
       if (context.mounted) {
+        // Check for updates based on the operating system.
         switch (platform.operatingSystem) {
+
           case "android":
             return CheckProvider().checkAndroidUpdate(
               data["android"],
@@ -100,7 +108,6 @@ class UpdateCenter {
               downloadState,
               config,
               downloadUrl,
-
             );
 
           default:
@@ -109,8 +116,9 @@ class UpdateCenter {
       }
       return false;
     } catch (e) {
+      // Handle any exceptions during the update check.
       print("Error in UpdateCenter.check: $e");
-      return false; // Handle parsing errors or other exceptions
+      return false;
     }
   }
 }

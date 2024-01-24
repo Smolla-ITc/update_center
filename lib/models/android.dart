@@ -1,3 +1,4 @@
+/// json model for android
 class AndroidModel {
   String downloadUrl, versionName, changeLog, sourceUrl, sha256checksum;
   int versionCode, minSupport;

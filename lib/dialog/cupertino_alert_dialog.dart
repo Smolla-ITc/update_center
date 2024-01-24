@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../config/config.dart';
 
+/// Dialog used to display updates for iOS
 class CupertinoDialog extends StatelessWidget {
 
   final String versionName;

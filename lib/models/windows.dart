@@ -1,3 +1,4 @@
+/// Json model for windows
 class WindowsModel {
   String downloadUrl, versionName, changeLog, sourceUrl, sha256checksum;
   int versionCode, minSupport;

@@ -3,6 +3,7 @@ import 'package:update_center/utils/constants.dart';
 import '../config/config.dart';
 import '../utils/download_utils.dart';
 
+/// Bottom sheet material is used to display the update
 class MaterialBottomSheet extends StatelessWidget {
   final String versionName;
   final String changeLog;
@@ -110,5 +111,3 @@ class MaterialBottomSheet extends StatelessWidget {
     ));
   }
 }
-
-

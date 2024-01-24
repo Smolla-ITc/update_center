@@ -12,8 +12,9 @@ import '../dialog/material_alert_dialog.dart';
 import '../dialog/material_bottom_sheet.dart';
 import '../dialog/download_bottom_sheets.dart';
 
+/// DialogProvider class to handle showing different types of update dialogs based on platform and configuration.
 class DialogProvider {
-
+  /// Shows the appropriate update dialog based on platform and dialog type configuration.
   void showUpdateDialog(
       String versionName,
       String changeLog,
@@ -23,21 +24,27 @@ class DialogProvider {
       String sourceUrl,
       UpdateCenterConfig config
       ) {
+
+    /// For alertDialog type, shows platform-specific dialogs.
     if (config.dialogType == DialogType.alertDialog) {
 
+     // Shows a Cupertino style dialog for iOS.
       if(Platform.isIOS){
         _showCupertinoAlertDialog(versionName, changeLog, context, allowSkip, sourceUrl, config);
       }
 
+      // Shows a Material style dialog for Android.
       if(Platform.isAndroid) {
         _showMaterialAlertDialog(versionName, changeLog, context, allowSkip, downloadState, downloadUrl, config);
       }
 
     } else {
+      // Shows a bottom sheet dialog for other platforms or configuration.
       _showMaterialBottomSheet(versionName, changeLog, context, allowSkip, downloadState, downloadUrl, config);
     }
   }
 
+  /// Private method to show a Material style alert dialog.
   void _showMaterialAlertDialog(
       String versionName,
       String changeLog,
@@ -77,6 +84,7 @@ class DialogProvider {
     );
   }
 
+  /// Private method to show a Cupertino style alert dialog.
   void _showCupertinoAlertDialog(
       String versionName,
       String changeLog,
@@ -107,7 +115,7 @@ class DialogProvider {
     );
   }
 
-
+ /// Helper method to launch a URL using the url_launcher package.
   _launchURL(String sourceUrl) async {
     final Uri url = Uri.parse(sourceUrl);
     if (!await launchUrl(url)) {
@@ -115,6 +123,7 @@ class DialogProvider {
     }
   }
 
+  /// Private method to show a Material style bottom sheet.
   void _showMaterialBottomSheet(
       String versionName,
       String changeLog,
