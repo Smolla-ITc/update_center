@@ -63,7 +63,7 @@ class MaterialBottomSheet extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Row(
                       children: [
-                        config.iconBottomSheet,
+                        config.customIconTitle,
                         const SizedBox(width: 8.0),
                         Text(
                           versionName,
@@ -104,8 +104,7 @@ class MaterialBottomSheet extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child:
                   Text(changeLog, style: config.bottomSheetChangeLogTextStyle),
-            )
-        ),
+            )),
         sizeVer(20),
       ],
     ));

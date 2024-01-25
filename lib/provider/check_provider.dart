@@ -11,7 +11,6 @@ import 'memory_provider.dart';
 
 /// The CheckProvider class is responsible for handling update checks for different platforms.
 class CheckProvider {
-
   /// Checks for an available update for Android platform and shows update dialog if necessary.
   ///
   /// [androidData] - Data containing update details for Android.
@@ -22,18 +21,16 @@ class CheckProvider {
   /// [downloadState] - State manager for download progress.
   /// [config] - Configuration settings for the update.
   /// [downloadUrl] - URL to download the update.
-   Future<bool> checkAndroidUpdate(
-      Map<String, dynamic> androidData,
-      PackageInfo packageInfo,
-      bool withDialog,
-      bool allowSkip,
-      BuildContext context,
-      DownloadState downloadState,
-      UpdateCenterConfig config,
-      String downloadUrl,
-
-      ) async {
-
+  Future<bool> checkAndroidUpdate(
+    Map<String, dynamic> androidData,
+    PackageInfo packageInfo,
+    bool withDialog,
+    bool allowSkip,
+    BuildContext context,
+    DownloadState downloadState,
+    UpdateCenterConfig config,
+    String downloadUrl,
+  ) async {
     AndroidModel model = AndroidModel(
       androidData['downloadUrl'],
       androidData['versionName'],
@@ -61,8 +58,7 @@ class CheckProvider {
             downloadState,
             model.downloadUrl,
             model.sourceUrl,
-            config
-        );
+            config);
       }
       downloadUrl = model.downloadUrl; // Set the download URL
 
@@ -80,20 +76,20 @@ class CheckProvider {
     return false; // No update available
   }
 
-   /// Checks for an available update for iOS platform and shows update dialog if necessary.
-   ///
-   /// [iosData] - Data containing update details for iOS.
-   /// Similar parameters as checkAndroidUpdate.
-   Future<bool> checkIOSUpdate(
-      Map<String, dynamic> iosData,
-      PackageInfo packageInfo,
-      bool withDialog,
-      bool allowSkip,
-      BuildContext context,
-      DownloadState downloadState,
-      UpdateCenterConfig config,
-      String downloadUrl,
-      ) async {
+  /// Checks for an available update for iOS platform and shows update dialog if necessary.
+  ///
+  /// [iosData] - Data containing update details for iOS.
+  /// Similar parameters as checkAndroidUpdate.
+  Future<bool> checkIOSUpdate(
+    Map<String, dynamic> iosData,
+    PackageInfo packageInfo,
+    bool withDialog,
+    bool allowSkip,
+    BuildContext context,
+    DownloadState downloadState,
+    UpdateCenterConfig config,
+    String downloadUrl,
+  ) async {
     IOSModel model = IOSModel(
       iosData['versionName'],
       iosData['changeLog'],
@@ -112,14 +108,14 @@ class CheckProvider {
     if (buildNumber < model.versionCode) {
       if (withDialog) {
         DialogProvider().showUpdateDialog(
-            model.versionName,
-            model.changeLog,
-            context,
-            allowSkip,
-            downloadState,
-            downloadUrl,
-            model.sourceUrl,
-            config,
+          model.versionName,
+          model.changeLog,
+          context,
+          allowSkip,
+          downloadState,
+          downloadUrl,
+          model.sourceUrl,
+          config,
         );
       }
       return true; // Return true to indicate that an update is available
@@ -134,20 +130,19 @@ class CheckProvider {
     return false; // No update available
   }
 
-   /// Checks for an available update for Windows platform and shows update dialog if necessary.
-   ///
-   /// [windowsData] - Data containing update details for Windows.
-   Future<bool> checkWindowsUpdate(
-      Map<String, dynamic> windowsData,
-      PackageInfo packageInfo,
-      bool withDialog,
-      bool allowSkip,
-      BuildContext context,
-      DownloadState downloadState,
-      UpdateCenterConfig config,
-      String downloadUrl,
-
-      ) async {
+  /// Checks for an available update for Windows platform and shows update dialog if necessary.
+  ///
+  /// [windowsData] - Data containing update details for Windows.
+  Future<bool> checkWindowsUpdate(
+    Map<String, dynamic> windowsData,
+    PackageInfo packageInfo,
+    bool withDialog,
+    bool allowSkip,
+    BuildContext context,
+    DownloadState downloadState,
+    UpdateCenterConfig config,
+    String downloadUrl,
+  ) async {
     WindowsModel model = WindowsModel(
       windowsData['downloadUrl'],
       windowsData['versionName'],

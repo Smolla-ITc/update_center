@@ -18,43 +18,40 @@ class DialogProvider {
   void showUpdateDialog(
       String versionName,
       String changeLog,
-      BuildContext context, bool allowSkip,
+      BuildContext context,
+      bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
       String sourceUrl,
-      UpdateCenterConfig config
-      ) {
-
-    /// For alertDialog type, shows platform-specific dialogs.
+      UpdateCenterConfig config) {
+    // For alertDialog type, shows platform-specific dialogs.
     if (config.dialogType == DialogType.alertDialog) {
-
-     // Shows a Cupertino style dialog for iOS.
-      if(Platform.isIOS){
-        _showCupertinoAlertDialog(versionName, changeLog, context, allowSkip, sourceUrl, config);
+      // Shows a Cupertino style dialog for iOS, Material style for Android and Windows.
+      if (Platform.isIOS) {
+        _showCupertinoAlertDialog(
+            versionName, changeLog, context, allowSkip, sourceUrl, config);
+      } else if (Platform.isAndroid || Platform.isWindows) {
+        _showMaterialAlertDialog(
+            versionName, changeLog, sourceUrl, context, allowSkip, downloadState, downloadUrl, config);
       }
-
-      // Shows a Material style dialog for Android.
-      if(Platform.isAndroid) {
-        _showMaterialAlertDialog(versionName, changeLog, context, allowSkip, downloadState, downloadUrl, config);
-      }
-
     } else {
       // Shows a bottom sheet dialog for other platforms or configuration.
-      _showMaterialBottomSheet(versionName, changeLog, context, allowSkip, downloadState, downloadUrl, config);
+      _showMaterialBottomSheet(
+          versionName, changeLog, sourceUrl, context, allowSkip, downloadState, downloadUrl, config);
     }
   }
+
 
   /// Private method to show a Material style alert dialog.
   void _showMaterialAlertDialog(
       String versionName,
       String changeLog,
+      String sourceUrl,
       BuildContext context,
       bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
-      UpdateCenterConfig config
-
-      ) {
+      UpdateCenterConfig config) {
     showDialog(
       context: context,
       barrierDismissible: allowSkip,
@@ -65,15 +62,33 @@ class DialogProvider {
           allowSkip: allowSkip,
           config: config,
           onUpdate: () {
-            if (Platform.isWindows) {
-              DownloadProvider.downloadUpdateWindows(
-                  downloadUrl, versionName, (progress) {}, config,
-                  downloadState);
-            }
-            if (Platform.isAndroid) {
-              DownloadProvider.downloadUpdateAndroid(
-                  downloadUrl, versionName, (progress) {}, config,
-                  downloadState);
+            Navigator.of(context).pop();
+            showModalBottomSheet(
+                isScrollControlled: true,
+                isDismissible: false,
+                enableDrag: false,
+                context: context,
+                builder: (context) => PopScope(
+                      canPop: false,
+                      child: DownloadProgressBottomSheets(
+                        downloadState: downloadState,
+                        config: config,
+                        allowSkip: allowSkip,
+                      ),
+                    ));
+
+            /// Checks the isSourceUrl value from the file in main.dart
+            /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.
+            if (config.isSourceUrl) {
+              _launchURL(sourceUrl);
+            } else {
+              if (Platform.isWindows) {
+                DownloadProvider.downloadUpdateWindows(downloadUrl, versionName,
+                    (progress) {}, config, downloadState);
+              } else if (Platform.isAndroid) {
+                DownloadProvider.downloadUpdateAndroid(downloadUrl, versionName,
+                    (progress) {}, config, downloadState);
+              }
             }
           },
           onSkip: () {
@@ -91,21 +106,18 @@ class DialogProvider {
       BuildContext context,
       bool allowSkip,
       String sourceUrl,
-      UpdateCenterConfig config
-      ) {
+      UpdateCenterConfig config) {
     showCupertinoModalPopup(
-
       context: context,
       barrierDismissible: allowSkip,
       builder: (BuildContext context) {
-        return
-          CupertinoDialog(
+        return CupertinoDialog(
           versionName: versionName,
           changeLog: changeLog,
           allowSkip: allowSkip,
           config: config,
           onUpdate: () {
-             _launchURL(sourceUrl);
+            _launchURL(sourceUrl);
           },
           onSkip: () {
             Navigator.of(context).pop();
@@ -115,7 +127,7 @@ class DialogProvider {
     );
   }
 
- /// Helper method to launch a URL using the url_launcher package.
+  /// Helper method to launch a URL using the url_launcher package.
   _launchURL(String sourceUrl) async {
     final Uri url = Uri.parse(sourceUrl);
     if (!await launchUrl(url)) {
@@ -127,12 +139,12 @@ class DialogProvider {
   void _showMaterialBottomSheet(
       String versionName,
       String changeLog,
+      String sourceUrl,
       BuildContext context,
       bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
       UpdateCenterConfig config) {
-
     showModalBottomSheet(
       isDismissible: allowSkip,
       isScrollControlled: true,
@@ -153,25 +165,27 @@ class DialogProvider {
                   isDismissible: false,
                   enableDrag: false,
                   context: context,
-                  builder: (context) =>
-                      PopScope(
+                  builder: (context) => PopScope(
                         canPop: false,
                         child: DownloadProgressBottomSheets(
                           downloadState: downloadState,
                           config: config,
                           allowSkip: allowSkip,
                         ),
-                      )
-              );
-              if (Platform.isWindows) {
-                DownloadProvider.downloadUpdateWindows(
-                    downloadUrl, versionName, (progress) {}, config,
-                    downloadState);
-              }
-              if (Platform.isAndroid) {
-                DownloadProvider.downloadUpdateAndroid(
-                    downloadUrl, versionName, (progress) {}, config,
-                    downloadState);
+                      ));
+
+              /// Checks the isSourceUrl value from the file in main.dart
+              /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.
+              if (config.isSourceUrl) {
+                _launchURL(sourceUrl);
+              } else {
+                if (Platform.isWindows) {
+                  DownloadProvider.downloadUpdateWindows(downloadUrl,
+                      versionName, (progress) {}, config, downloadState);
+                } else if (Platform.isAndroid) {
+                  DownloadProvider.downloadUpdateAndroid(downloadUrl,
+                      versionName, (progress) {}, config, downloadState);
+                }
               }
             },
           ),

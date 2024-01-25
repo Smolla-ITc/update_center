@@ -4,7 +4,6 @@ import 'package:path_provider/path_provider.dart';
 
 /// A utility class for handling file storage operations in the application.
 class MemoryProvider {
-
   /// Retrieves a local file reference for Android, based on a given URL.
   /// The file is expected to be in the application's document directory.
   static Future<File> getLocalFileAndroid(String url) async {

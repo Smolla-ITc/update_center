@@ -9,7 +9,6 @@ import '../utils/download_utils.dart';
 
 /// Provides functionality to handle the download process for updates.
 class DownloadProvider {
-
   /// Downloads an update for Android platform.
   ///
   /// [url] - URL of the file to be downloaded.
@@ -44,7 +43,7 @@ class DownloadProvider {
     var fileStream = file.openWrite();
 
     response.stream.listen(
-          (List<int> newBytes) {
+      (List<int> newBytes) {
         notificationProvider.cancelNotification(1000);
         bytesDownloaded += newBytes.length;
         fileStream.add(newBytes);
@@ -57,12 +56,13 @@ class DownloadProvider {
         downloadState.progress.value =
             currentProgress; // currentProgress is a value between 0.0 and 1.0
         downloadState.progressText.value =
-        "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
         if (currentProgress - lastNotifiedProgress >= 0.02 ||
             currentProgress == 1.0) {
-          notificationProvider.showDownloadProgressNotification(contentLength, bytesDownloaded, versionName);
+          notificationProvider.showDownloadProgressNotification(
+              contentLength, bytesDownloaded, versionName);
 
           lastNotifiedProgress = currentProgress;
         }

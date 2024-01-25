@@ -3,7 +3,6 @@ import '../config/config.dart';
 
 /// Alert dialog material is used to display the update
 class MaterialAlertDialog extends StatelessWidget {
-
   final String versionName;
 
   final String changeLog;
@@ -16,15 +15,14 @@ class MaterialAlertDialog extends StatelessWidget {
 
   final UpdateCenterConfig config;
 
-  const MaterialAlertDialog({
-    super.key,
-    required this.versionName,
-    required this.changeLog,
-    this.allowSkip = true,
-    required this.onUpdate,
-    required this.onSkip,
-    required this.config
-  });
+  const MaterialAlertDialog(
+      {super.key,
+      required this.versionName,
+      required this.changeLog,
+      this.allowSkip = true,
+      required this.onUpdate,
+      required this.onSkip,
+      required this.config});
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +30,9 @@ class MaterialAlertDialog extends StatelessWidget {
       canPop: allowSkip,
       child: AlertDialog(
         scrollable: true,
-        title: Text(versionName, textAlign: TextAlign.center,
-            style: config.alertVersionNameStyle),
+        icon: config.customIconTitle,
+        title: Text(versionName,
+            textAlign: TextAlign.center, style: config.alertVersionNameStyle),
         content: Text(
           changeLog,
           textAlign: TextAlign.start,

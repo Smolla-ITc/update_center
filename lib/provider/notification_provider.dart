@@ -12,7 +12,8 @@ class NotificationProvider {
   });
 
   /// Singleton instance of FlutterLocalNotificationsPlugin.
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// Initializes the notification settings.
   ///
@@ -57,7 +58,7 @@ class NotificationProvider {
   // Private method to initialize the notification plugin with settings.
   static Future<void> _initialize(String defaultIcon) async {
     var initializationSettingsAndroid =
-    AndroidInitializationSettings(defaultIcon);
+        AndroidInitializationSettings(defaultIcon);
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
@@ -66,14 +67,14 @@ class NotificationProvider {
 
   // Private method to show a download progress notification.
   static Future<void> _showDownloadProgressNotification(
-      int maxProgress,
-      int progress,
-      String versionName,
-      String downloadProgressNotificationTextTitle,
-      String downloadProgressNotificationTextBody,
-      bool showProgress,
-      bool channelShowBadge,
-      ) async {
+    int maxProgress,
+    int progress,
+    String versionName,
+    String downloadProgressNotificationTextTitle,
+    String downloadProgressNotificationTextBody,
+    bool showProgress,
+    bool channelShowBadge,
+  ) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',
@@ -81,6 +82,7 @@ class NotificationProvider {
       importance: Importance.low,
       priority: Priority.low,
       onlyAlertOnce: true,
+      subText: versionName,
       showProgress: showProgress,
       maxProgress: maxProgress,
       progress: progress,
@@ -92,7 +94,7 @@ class NotificationProvider {
 
     await flutterLocalNotificationsPlugin.show(
       900, // Notification ID
-      '$downloadProgressNotificationTextTitle $versionName', // Title
+      downloadProgressNotificationTextTitle, // Title
       downloadProgressNotificationTextBody, // Body
       platformChannelSpecifics,
       payload: 'download_payload',
@@ -101,10 +103,10 @@ class NotificationProvider {
 
   // Private method to show a download failed notification.
   static Future<void> _showDownloadFailedNotification(
-      String versionName,
-      String downloadFailedNotificationTitleText,
-      String downloadFailedNotificationBodyText,
-      ) async {
+    String versionName,
+    String downloadFailedNotificationTitleText,
+    String downloadFailedNotificationBodyText,
+  ) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',

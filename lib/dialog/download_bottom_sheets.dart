@@ -112,7 +112,7 @@ class DownloadProgressBottomSheets extends StatelessWidget {
                   const SizedBox(width: 33),
                   Expanded(
                     child: LinearProgressIndicator(
-                      value: progress,
+                      value: progress == 0.0 ? null : progress,
                       minHeight: 5,
                       borderRadius: BorderRadius.circular(4),
                     ),
