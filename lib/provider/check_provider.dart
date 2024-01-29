@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import '../config/config.dart';
 import '../utils/download_utils.dart';
 import '../models/android.dart';
@@ -42,7 +39,6 @@ class CheckProvider {
       androidData['minSupport'],
     );
 
-    const String versionInfoFile = 'version_info.txt';
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     if (model.minSupport > buildNumber) {
@@ -51,21 +47,19 @@ class CheckProvider {
 
     // Check if the current build number is less than the update version code
     if (buildNumber < model.versionCode) {
-        // Get the stored version info
-        String? storedVersion = await MemoryProvider.getVersionInfoAndroid();
+      // Get the stored version info
+      String? storedVersion = await MemoryProvider.getVersionInfoAndroid();
 
-        // Compare with the new version
-        if (storedVersion != null && storedVersion != model.versionName) {
-          // Versions differ, delete the old file and stored version info
-          MemoryProvider.deleteFileDirectory();
-          // Delete the version info file
-          File('${(await getApplicationDocumentsDirectory()).path}/UpdateCenter/$versionInfoFile').delete();
-        }
+      // Compare with the new version
+      if (storedVersion != null && storedVersion != model.versionName) {
+        // Versions differ, delete the old file and stored version info
+        MemoryProvider.deleteFileDirectory();
+      }
 
-        // Save the new version info
-        await MemoryProvider.saveVersionInfoAndroid(model.versionName);
+      // Save the new version info
+      await MemoryProvider.saveVersionInfoAndroid(model.versionName);
 
-        if(context.mounted){
+      if (context.mounted) {
         DialogProvider().showUpdateDialog(
             model.versionName,
             model.changeLog,
@@ -76,7 +70,7 @@ class CheckProvider {
             model.sha256checksum,
             model.sourceUrl,
             config);
-        }
+      }
       downloadUrl = model.downloadUrl; // Set the download URL
 
       return true; // Return true to indicate that an update is available
@@ -123,17 +117,17 @@ class CheckProvider {
 
     // Check if the current build number is less than the update version code
     if (buildNumber < model.versionCode) {
-        DialogProvider().showUpdateDialog(
-          model.versionName,
-          model.changeLog,
-          context,
-          allowSkip,
-          downloadState,
-          downloadUrl,
-          model.sourceUrl,
-          sha256checksum,
-          config,
-        );
+      DialogProvider().showUpdateDialog(
+        model.versionName,
+        model.changeLog,
+        context,
+        allowSkip,
+        downloadState,
+        downloadUrl,
+        model.sourceUrl,
+        sha256checksum,
+        config,
+      );
       return true; // Return true to indicate that an update is available
     }
 
@@ -168,7 +162,6 @@ class CheckProvider {
       windowsData['minSupport'],
     );
 
-    const String versionInfoFile = 'version_info.txt';
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     if (model.minSupport > buildNumber) {
@@ -184,15 +177,12 @@ class CheckProvider {
       if (storedVersion != null && storedVersion != model.versionName) {
         // Versions differ, delete the old file and stored version info
         MemoryProvider.deleteFileDirectoryWindows();
-        // Delete the version info file
-        File('${(await getDownloadsDirectory())?.path}/Update Center/$versionInfoFile').delete();
       }
 
       // Save the new version info
       await MemoryProvider.saveVersionInfoWindows(model.versionName);
 
-      if(context.mounted){
-
+      if (context.mounted) {
         DialogProvider().showUpdateDialog(
             model.versionName,
             model.changeLog,
@@ -210,7 +200,7 @@ class CheckProvider {
 
     if (buildNumber >= model.versionCode) {
       if (config.globalConfig.isNoUpdateAvailableToast) {
-        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(config.uiConfig.toastNoUpdateFoundText),
           duration: const Duration(seconds: 1),
         ));

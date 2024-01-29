@@ -15,7 +15,6 @@
 - Once the download is complete, the files themselves open in supported formats. In Windows zip and exe and also any file. And Android is similar.
 - And there is also flexible customization of the plugin, see example below. These are not all the settings many more settings will be added in the future.
 - Support hash check 256 after downloading a file.
-- 
 
 ## Screenshots android (Windows is identical to android)
 <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-alert-dialog-m3.png" width="300" alt="image-alert-dialog-m3"/> <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-bottom-sheet-m3.png" width="300" alt="image-bottom-sheet-m3"/> <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-download-bottom-shet-m3.png" width="300" alt="image-download-bottom-sheet-m3"/> <img src="https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/scr-verifiedSha256-bottom-shet-m3.png" width="300" alt="image-verifiedSha256-bottom-sheet-m3"/>
@@ -28,7 +27,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^1.0.0-alpha.4
+  update_center: ^1.0.0-alpha.5
 ```
 
 ## Json file structure
@@ -38,7 +37,7 @@ dependencies:
   "android": {
     "versionCode": 2,
     "versionName": "1.1.0",
-    "downloadUrl": "https://example.com/UpdateCenetr/app.apk",
+    "downloadUrl": "https://example.com/UpdateCenter/app.apk",
     "changeLog": "- bug fixed; \n- new ui;",
     "sourceUrl": "https://example.com/",
     "sha256checksum": "191bca0b245e3c5553375fd232ee7790b08068e9c5bf7c5a8277416cbf6f99cd",
@@ -54,9 +53,9 @@ dependencies:
   },
 
   "windows": {
-    "versionCode": 34,
+    "versionCode": 2,
     "versionName": "5.0.0",
-    "downloadUrl": "https://example.com/UdateCenter/app-windows.exe",
+    "downloadUrl": "https://example.com/UpdateCenter/app-windows.exe",
     "changeLog": "- Bug fixes and performance improvements. \n- New Icon;",
     "sourceUrl": "https://example.com/",
     "sha256checksum": "ffecd22303245e714739429280c7e91deade14b28957dd6413cce938239cd275",
@@ -71,7 +70,7 @@ dependencies:
     "android": {
         "versionCode": 2, // Integer representing the new version code for Android
         "versionName": "1.1.0", // String representing the new version name for Android
-        "downloadUrl": "https://example.com/UpdateCenetr/app.apk", // URL to download the new Android APK
+        "downloadUrl": "https://example.com/UpdateCenter/app.apk", // URL to download the new Android APK
         "changeLog": "- bug fixed; \n- new ui;", // Change log detailing what's new or fixed in this version
         "sourceUrl": "https://example.com/", // URL to the source or more information about the update
         "sha256checksum": "191bca0b245e3c5553375fd232ee7790b08068e9c5bf7c5a8277416cbf6f99cd", // SHA-256 checksum for verifying the integrity of the downloaded file (optional)
@@ -89,7 +88,7 @@ dependencies:
     "windows": {
         "versionCode": 34, // Integer representing the new version code for Windows
         "versionName": "5.0.0", // String representing the new version name for Windows
-        "downloadUrl": "https://example.com/UdateCenter/app-windows.exe", // URL to download the new Windows application
+        "downloadUrl": "https://example.com/UpdateCenter/app-windows.exe", // URL to download the new Windows application
         "changeLog": "- Bug fixes and performance improvements. \n- New Icon;", // Change log for the Windows version
         "sourceUrl": "https://example.com/", // URL for more information or source for the Windows update
         "sha256checksum": "ffecd22303245e714739429280c7e91deade14b28957dd6413cce938239cd275", // SHA-256 checksum for the Windows file (optional)

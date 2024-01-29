@@ -1,15 +1,12 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../config/config.dart';
 
-
 /// id notification
 ///
 /// 1000 Download notification
 /// 2000 Download complete
 /// 3000 Download failed
 /// 4000 Verified sha256
-
-
 
 /// The notification provider stores all the methods for displaying notifications to make them easier to manage.
 class NotificationProvider {
@@ -19,14 +16,16 @@ class NotificationProvider {
     required this.config,
   });
 
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   final int downloadIdNotification = 1000;
   final int downloadIdN = 1000;
 
   /// Initializing the notification plugin
   Future<void> initialize() async {
-    var initializationSettingsAndroid = AndroidInitializationSettings(config.notificationConfig.defaultIcon);
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings(config.notificationConfig.defaultIcon);
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
@@ -47,8 +46,9 @@ class NotificationProvider {
     );
   }
 
- /// Separate code to show file download progress
-  Future<void> showDownloadProgressNotification(int maxProgress, int progress, String versionName) async {
+  /// Separate code to show file download progress
+  Future<void> showDownloadProgressNotification(
+      int maxProgress, int progress, String versionName) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',
@@ -71,11 +71,10 @@ class NotificationProvider {
       title: config.notificationConfig.downloadProgressNotificationTextTitle,
       body: config.notificationConfig.downloadProgressNotificationTextBody,
       platformChannelSpecifics: platformChannelSpecifics,
-
     );
   }
 
- /// Universal code for notifications that is used throughout the plugin
+  /// Universal code for notifications that is used throughout the plugin
   Future<void> showGenericNotification({
     required int id,
     required String title,

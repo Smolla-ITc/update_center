@@ -1,5 +1,5 @@
- import 'package:flutter/material.dart';
- import '../utils/constants.dart';
+import 'package:flutter/material.dart';
+import '../utils/constants.dart';
 
 /// Global Configuration for the plugin
 class GlobalConfig {
@@ -9,6 +9,7 @@ class GlobalConfig {
   final bool isVerifiedSha256Android;
   final bool isVerifiedSha256Windows;
   final bool isRequestForNotifications;
+  final bool isOpenFile;
 
   GlobalConfig({
     this.isCheckStart = false,
@@ -17,6 +18,7 @@ class GlobalConfig {
     this.isVerifiedSha256Android = false,
     this.isVerifiedSha256Windows = false,
     this.isRequestForNotifications = false,
+    this.isOpenFile = false,
   });
 }
 
@@ -48,23 +50,22 @@ class UIConfig {
     this.titleDownloadBottomSheets = 'Downloading...',
     this.titleVerifiedSha256BottomSheets = 'Verified sha256...',
     this.toastNoUpdateFoundText = 'No update found',
-
     this.alertVersionNameStyle =
-    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
     this.alertChangeLogTextStyle =
-    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
     this.bottomSheetVersionNameTextStyle =
-    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     this.bottomSheetChangeLogTextStyle =
-    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    this.updateAvailableTextStyle =
-    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold,),
+        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    this.updateAvailableTextStyle = const TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    ),
     this.changelogTextStyle =
-    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-
+        const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     this.customIconTitle = const Icon(Icons.downloading_outlined),
     this.dialogType = DialogType.bottomSheet,
-
   });
 }
 
@@ -86,10 +87,10 @@ class NotificationConfig {
     this.downloadProgressNotificationTextTitle = 'Download',
     this.downloadProgressNotificationTextBody = '',
     this.downloadFailedNotificationTitleText = 'Download failed',
-    this.downloadFailedNotificationBodyText = 'An error occurred while downloading update. Check your internet connections and try again',
+    this.downloadFailedNotificationBodyText =
+        'An error occurred while downloading update. Check your internet connections and try again',
     this.verifiedSha256NotificationTitleText = 'Verified sha256',
     this.verifiedSha256NotificationBodyText = '',
-
     this.showProgress = true,
     this.channelShowBadge = true,
   });

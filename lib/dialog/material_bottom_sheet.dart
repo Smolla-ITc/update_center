@@ -92,7 +92,8 @@ class MaterialBottomSheet extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 24.0, bottom: 12.0),
-          child: Text(config.uiConfig.changelogText, style: config.uiConfig.changelogTextStyle),
+          child: Text(config.uiConfig.changelogText,
+              style: config.uiConfig.changelogTextStyle),
         ),
         Container(
             margin: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -102,8 +103,8 @@ class MaterialBottomSheet extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child:
-                  Text(changeLog, style: config.uiConfig.bottomSheetChangeLogTextStyle),
+              child: Text(changeLog,
+                  style: config.uiConfig.bottomSheetChangeLogTextStyle),
             )),
         sizeVer(20),
       ],

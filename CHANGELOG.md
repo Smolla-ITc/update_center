@@ -1,3 +1,11 @@
+## 1.0.0-alpha.5
+
+* Changed the way version data is stored to SharedPreferences
+* Readme updated
+* Minor code refactoring
+* Added ```isOpenFile``` flag
+* Other small fixes
+
 ## 1.0.0-alpha.4
 
 * Replaced license for Apache 2.0

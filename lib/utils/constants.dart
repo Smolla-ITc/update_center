@@ -12,6 +12,7 @@ Widget sizeVer(double height) {
     height: height,
   );
 }
+
 // Used to determine the horizontal offset
 Widget sizeHor(double width) {
   return SizedBox(width: width);

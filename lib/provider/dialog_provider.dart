@@ -65,21 +65,48 @@ class DialogProvider {
           changeLog: changeLog,
           allowSkip: allowSkip,
           config: config,
-          onUpdate: () {
-            Navigator.of(context).pop();
-            showModalBottomSheet(
-                isScrollControlled: true,
-                isDismissible: false,
-                enableDrag: false,
-                context: context,
-                builder: (context) => PopScope(
-                      canPop: false,
-                      child: DownloadProgressBottomSheet(
-                        downloadState: downloadState,
-                        config: config,
-                        allowSkip: allowSkip,
-                      ),
-                    ));
+          onUpdate: () async {
+            if (allowSkip) {
+              Navigator.of(context).pop();
+            }
+
+            if (config.globalConfig.isOpenFile) {
+              File localFile;
+              if (Platform.isWindows) {
+                localFile =
+                    await MemoryProvider.getLocalFileWindows(downloadUrl);
+              } else if (Platform.isAndroid) {
+                localFile =
+                    await MemoryProvider.getLocalFileAndroid(downloadUrl);
+              } else {
+                // Handle other platforms if necessary
+                return;
+              }
+
+              if (await localFile.exists()) {
+                log(localFile.path);
+
+                // Optionally, open the file directly
+                await OpenFilex.open(localFile.path);
+                return;
+              }
+            }
+
+            if (context.mounted) {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  isDismissible: false,
+                  enableDrag: false,
+                  context: context,
+                  builder: (context) => PopScope(
+                        canPop: false,
+                        child: DownloadProgressBottomSheet(
+                          downloadState: downloadState,
+                          config: config,
+                          allowSkip: allowSkip,
+                        ),
+                      ));
+            }
 
             /// Checks the isSourceUrl value from the file in main.dart
             /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.
@@ -164,42 +191,47 @@ class DialogProvider {
             changeLog: changeLog,
             config: config,
             onUpdate: () async {
-              if(allowSkip) {
+              if (allowSkip) {
                 Navigator.of(context).pop();
               }
 
-              File localFile;
-              if (Platform.isWindows) {
-                localFile = await MemoryProvider.getLocalFileWindows(downloadUrl);
-              } else if (Platform.isAndroid) {
-                localFile = await MemoryProvider.getLocalFileAndroid(downloadUrl);
-              } else {
-                // Handle other platforms if necessary
-                return;
+              if (config.globalConfig.isOpenFile) {
+                File localFile;
+                if (Platform.isWindows) {
+                  localFile =
+                      await MemoryProvider.getLocalFileWindows(downloadUrl);
+                } else if (Platform.isAndroid) {
+                  localFile =
+                      await MemoryProvider.getLocalFileAndroid(downloadUrl);
+                } else {
+                  // Handle other platforms if necessary
+                  return;
+                }
+
+                if (await localFile.exists()) {
+                  log(localFile.path);
+
+                  // Optionally, open the file directly
+                  await OpenFilex.open(localFile.path);
+                  return;
+                }
               }
 
-              if (await localFile.exists()) {
-                log(localFile.path);
-
-                // Optionally, open the file directly
-                await OpenFilex.open(localFile.path);
-                return;
+              if (context.mounted) {
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    isDismissible: false,
+                    enableDrag: false,
+                    context: context,
+                    builder: (context) => PopScope(
+                          canPop: false,
+                          child: DownloadProgressBottomSheet(
+                            downloadState: downloadState,
+                            config: config,
+                            allowSkip: allowSkip,
+                          ),
+                        ));
               }
-
-              if(context.mounted){
-              showModalBottomSheet(
-                  isScrollControlled: true,
-                  isDismissible: false,
-                  enableDrag: false,
-                  context: context,
-                  builder: (context) => PopScope(
-                        canPop: false,
-                        child: DownloadProgressBottomSheet(
-                          downloadState: downloadState,
-                          config: config,
-                          allowSkip: allowSkip,
-                        ),
-                      ));}
 
               /// Checks the isSourceUrl value from the file in main.dart
               /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.

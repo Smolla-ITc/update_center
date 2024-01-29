@@ -99,7 +99,7 @@ class DownloadProgressBottomSheet extends StatelessWidget {
               builder: (_, progressText, __) {
                 return Row(
                   children: [
-                   config.uiConfig.customIconTitle,
+                    config.uiConfig.customIconTitle,
                     sizeHor(5),
                     Text(
                       progressText,

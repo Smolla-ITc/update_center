@@ -32,7 +32,8 @@ class MaterialAlertDialog extends StatelessWidget {
         scrollable: true,
         icon: config.uiConfig.customIconTitle,
         title: Text(versionName,
-            textAlign: TextAlign.center, style: config.uiConfig.alertVersionNameStyle),
+            textAlign: TextAlign.center,
+            style: config.uiConfig.alertVersionNameStyle),
         content: Text(
           changeLog,
           textAlign: TextAlign.start,

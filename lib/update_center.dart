@@ -26,11 +26,10 @@ class UpdateCenter {
     required this.config, // Configuration settings for UpdateCenter.
     this.allowSkip = true, // Flag to allow skipping the update.
   }) {
-
     WidgetsFlutterBinding.ensureInitialized();
 
     if (config.globalConfig.isRequestForNotifications) {
-        PermissionProvider.requestForNotifications();
+      PermissionProvider.requestForNotifications();
     }
 
     // If set in config, automatically check for updates after the first frame is rendered.

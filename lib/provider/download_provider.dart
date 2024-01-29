@@ -47,7 +47,6 @@ class DownloadProvider {
 
     response.stream.listen(
       (List<int> newBytes) {
-
         notificationProvider.cancelNotification(3000);
 
         bytesDownloaded += newBytes.length;
@@ -59,12 +58,16 @@ class DownloadProvider {
         onProgress(currentProgress);
 
         // Inside your download logic
-        downloadState.progress.value = currentProgress; // currentProgress is a value between 0.0 and 1.0
-        downloadState.progressText.value = "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+        downloadState.progress.value =
+            currentProgress; // currentProgress is a value between 0.0 and 1.0
+        downloadState.progressText.value =
+            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
-        if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
-          notificationProvider.showDownloadProgressNotification(contentLength, bytesDownloaded, versionName);
+        if (currentProgress - lastNotifiedProgress >= 0.02 ||
+            currentProgress == 1.0) {
+          notificationProvider.showDownloadProgressNotification(
+              contentLength, bytesDownloaded, versionName);
           lastNotifiedProgress = currentProgress;
         }
       },
@@ -77,7 +80,12 @@ class DownloadProvider {
         if (config.globalConfig.isVerifiedSha256Android) {
           downloadState.isVerifiedSha256.value = true;
 
-          notificationProvider.showGenericNotification(id: 4000, title: config.notificationConfig.verifiedSha256NotificationTitleText, body: config.notificationConfig.verifiedSha256NotificationBodyText);
+          notificationProvider.showGenericNotification(
+              id: 4000,
+              title:
+                  config.notificationConfig.verifiedSha256NotificationTitleText,
+              body:
+                  config.notificationConfig.verifiedSha256NotificationBodyText);
 
           String sha256Result = await compute(computeSha256, file);
           if (sha256Result == sha256checksum) {
@@ -108,10 +116,10 @@ class DownloadProvider {
 
         // Show notification about download failure
         notificationProvider.showGenericNotification(
-            id: 3000, title:
-            config.notificationConfig.downloadFailedNotificationTitleText,
-            body: config.notificationConfig.downloadFailedNotificationBodyText
-        );
+            id: 3000,
+            title:
+                config.notificationConfig.downloadFailedNotificationTitleText,
+            body: config.notificationConfig.downloadFailedNotificationBodyText);
 
         log(e, name: 'Update Center');
       },
@@ -182,10 +190,10 @@ class DownloadProvider {
             log("Checksum verification successful ${sha256Result.toString()}: used sha Windows");
           } else {
             // Checksums do not match
-            log("Checksum verification failed ${sha256Result.toString()}", name: 'Update Center');
+            log("Checksum verification failed ${sha256Result.toString()}",
+                name: 'Update Center');
           }
           downloadState.isVerifiedSha256.value = false;
-
         } else {
           // If a hash check is not used, open the file.
           await OpenFilex.open(fileName);

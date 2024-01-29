@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A utility class for handling file storage operations in the application.
 class MemoryProvider {
-
-  static const String versionInfoFile = 'version_info.txt';
+  static const String versionInfoKey = 'version_info';
 
   /// Retrieves a local file reference for Android, based on a given URL.
   /// The file is expected to be in the application's document directory.
@@ -83,38 +83,27 @@ class MemoryProvider {
     return updateDirectory;
   }
 
-
   // Saves the version information of the downloaded file
   static Future<void> saveVersionInfoAndroid(String versionName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    File('${directory.path}/UpdateCenter/$versionInfoFile').writeAsString(versionName);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(versionInfoKey, versionName);
   }
 
   // Retrieves the version information of the downloaded file
   static Future<String?> getVersionInfoAndroid() async {
-    final directory = await getApplicationDocumentsDirectory();
-    File versionFile = File('${directory.path}/UpdateCenter/$versionInfoFile');
-
-    if (await versionFile.exists()) {
-      return versionFile.readAsString();
-    }
-    return null;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(versionInfoKey);
   }
 
   // Saves the version information of the downloaded file
   static Future<void> saveVersionInfoWindows(String versionName) async {
-    final directory = await getDownloadsDirectory();
-    File('${directory?.path}/Update Center/$versionInfoFile').writeAsString(versionName);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(versionInfoKey, versionName);
   }
 
   // Retrieves the version information of the downloaded file
   static Future<String?> getVersionInfoWindows() async {
-    final directory = await getDownloadsDirectory();
-    File versionFile = File('${directory?.path}/Update Center/$versionInfoFile');
-
-    if (await versionFile.exists()) {
-      return versionFile.readAsString();
-    }
-    return null;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(versionInfoKey);
   }
 }
