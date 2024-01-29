@@ -58,12 +58,12 @@ class MaterialBottomSheet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(config.updateAvailableText,
-                        style: config.updateAvailableTextStyle),
+                    Text(config.uiConfig.updateAvailableText,
+                        style: config.uiConfig.updateAvailableTextStyle),
                     const SizedBox(height: 4.0),
                     Row(
                       children: [
-                        config.customIconTitle,
+                        config.uiConfig.customIconTitle,
                         const SizedBox(width: 8.0),
                         Text(
                           versionName,
@@ -83,7 +83,7 @@ class MaterialBottomSheet extends StatelessWidget {
                 builder: (context, isDownloading, child) {
                   return FilledButton(
                     onPressed: isDownloading ? null : onUpdate,
-                    child: Text(config.updateButtonText),
+                    child: Text(config.uiConfig.updateButtonText),
                   );
                 },
               ),
@@ -92,7 +92,7 @@ class MaterialBottomSheet extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 24.0, bottom: 12.0),
-          child: Text(config.changelogText, style: config.changelogTextStyle),
+          child: Text(config.uiConfig.changelogText, style: config.uiConfig.changelogTextStyle),
         ),
         Container(
             margin: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -103,7 +103,7 @@ class MaterialBottomSheet extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child:
-                  Text(changeLog, style: config.bottomSheetChangeLogTextStyle),
+                  Text(changeLog, style: config.uiConfig.bottomSheetChangeLogTextStyle),
             )),
         sizeVer(20),
       ],

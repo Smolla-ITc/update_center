@@ -4,6 +4,9 @@ import 'package:path_provider/path_provider.dart';
 
 /// A utility class for handling file storage operations in the application.
 class MemoryProvider {
+
+  static const String versionInfoFile = 'version_info.txt';
+
   /// Retrieves a local file reference for Android, based on a given URL.
   /// The file is expected to be in the application's document directory.
   static Future<File> getLocalFileAndroid(String url) async {
@@ -16,6 +19,23 @@ class MemoryProvider {
   /// This method is useful for cleaning up downloaded files.
   static void deleteFileDirectory() async {
     Directory updateDirectory = await directoryAndroid();
+
+    if (await updateDirectory.exists()) {
+      // List all files in the directory
+      List<FileSystemEntity> files = updateDirectory.listSync();
+
+      // Delete each file in the directory
+      for (var file in files) {
+        if (file is File) {
+          await file.delete();
+          log('Deleted file successfully: ${file.path}');
+        }
+      }
+    }
+  }
+
+  static void deleteFileDirectoryWindows() async {
+    Directory updateDirectory = await directoryWindows();
 
     if (await updateDirectory.exists()) {
       // List all files in the directory
@@ -48,18 +68,53 @@ class MemoryProvider {
   static Future<File> getLocalFileWindows(String url) async {
     final directory = await getDownloadsDirectory();
     final filename = url.split('/').last;
-    return File('${directory?.path}/UpdateCenter/$filename');
+    return File('${directory?.path}/Update Center/$filename');
   }
 
   /// Provides the UpdateCenter directory in the system's downloads directory for Windows.
   /// Creates the directory if it doesn't exist.
   static Future<Directory> directoryWindows() async {
     Directory? tempDir = await getDownloadsDirectory();
-    Directory updateDirectory = Directory('${tempDir?.path}/UpdateCenter/');
+    Directory updateDirectory = Directory('${tempDir?.path}/Update Center/');
 
     if (!await updateDirectory.exists()) {
       await updateDirectory.create(recursive: true);
     }
     return updateDirectory;
+  }
+
+
+  // Saves the version information of the downloaded file
+  static Future<void> saveVersionInfoAndroid(String versionName) async {
+    final directory = await getApplicationDocumentsDirectory();
+    File('${directory.path}/UpdateCenter/$versionInfoFile').writeAsString(versionName);
+  }
+
+  // Retrieves the version information of the downloaded file
+  static Future<String?> getVersionInfoAndroid() async {
+    final directory = await getApplicationDocumentsDirectory();
+    File versionFile = File('${directory.path}/UpdateCenter/$versionInfoFile');
+
+    if (await versionFile.exists()) {
+      return versionFile.readAsString();
+    }
+    return null;
+  }
+
+  // Saves the version information of the downloaded file
+  static Future<void> saveVersionInfoWindows(String versionName) async {
+    final directory = await getDownloadsDirectory();
+    File('${directory?.path}/Update Center/$versionInfoFile').writeAsString(versionName);
+  }
+
+  // Retrieves the version information of the downloaded file
+  static Future<String?> getVersionInfoWindows() async {
+    final directory = await getDownloadsDirectory();
+    File versionFile = File('${directory?.path}/Update Center/$versionInfoFile');
+
+    if (await versionFile.exists()) {
+      return versionFile.readAsString();
+    }
+    return null;
   }
 }

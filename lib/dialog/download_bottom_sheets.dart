@@ -3,14 +3,14 @@ import 'package:update_center/utils/download_utils.dart';
 import 'package:update_center/update_center.dart';
 
 /// Bottom sheet material is used to display update download progress
-class DownloadProgressBottomSheets extends StatelessWidget {
+class DownloadProgressBottomSheet extends StatelessWidget {
   final DownloadState downloadState;
 
   final UpdateCenterConfig config;
 
   final bool allowSkip;
 
-  const DownloadProgressBottomSheets({
+  const DownloadProgressBottomSheet({
     super.key,
     required this.downloadState,
     required this.config,
@@ -61,21 +61,33 @@ class DownloadProgressBottomSheets extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14.0),
-                child: Text(
-                  config.titleDownloadBottomSheets,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: downloadState.isVerifiedSha256,
+                  builder: (_, isVerifiedSha256, __) {
+                    String text = isVerifiedSha256
+                        ? config.uiConfig.titleVerifiedSha256BottomSheets
+                        : config.uiConfig.titleDownloadBottomSheets;
+
+                    return Text(
+                      text,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
                 ),
               ),
               if (allowSkip)
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                      icon: const Icon(Icons.close),
+                      onPressed: downloadState.isVerifiedSha256.value
+                          ? null
+                          : () async {
+                              Navigator.pop(context);
+                            }),
                 ),
             ],
           ),
@@ -87,10 +99,7 @@ class DownloadProgressBottomSheets extends StatelessWidget {
               builder: (_, progressText, __) {
                 return Row(
                   children: [
-                    const Icon(
-                      Icons.downloading_outlined,
-                      size: 28,
-                    ),
+                   config.uiConfig.customIconTitle,
                     sizeHor(5),
                     Text(
                       progressText,
@@ -112,7 +121,10 @@ class DownloadProgressBottomSheets extends StatelessWidget {
                   const SizedBox(width: 33),
                   Expanded(
                     child: LinearProgressIndicator(
-                      value: progress == 0.0 ? null : progress,
+                      value: downloadState.isVerifiedSha256.value ||
+                              progress == 0.0
+                          ? null
+                          : progress,
                       minHeight: 5,
                       borderRadius: BorderRadius.circular(4),
                     ),

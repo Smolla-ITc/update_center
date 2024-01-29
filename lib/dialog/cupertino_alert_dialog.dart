@@ -31,23 +31,23 @@ class CupertinoDialog extends StatelessWidget {
       child: CupertinoAlertDialog(
         title: Text(
           versionName,
-          style: config.alertVersionNameStyle,
+          style: config.uiConfig.alertVersionNameStyle,
         ),
         content: Text(
           changeLog,
-          style: config.alertChangeLogTextStyle,
+          style: config.uiConfig.alertChangeLogTextStyle,
         ),
         actions: <CupertinoDialogAction>[
           if (allowSkip)
             CupertinoDialogAction(
               isDefaultAction: true,
               onPressed: onSkip,
-              child: Text(config.skipButtonText),
+              child: Text(config.uiConfig.skipButtonText),
             ),
           CupertinoDialogAction(
             isDestructiveAction: true,
             onPressed: onUpdate,
-            child: Text(config.updateButtonText),
+            child: Text(config.uiConfig.updateButtonText),
           ),
         ],
       ),

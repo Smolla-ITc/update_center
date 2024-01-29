@@ -1,3 +1,15 @@
+## 1.0.0-alpha.4
+
+* Replaced license for Apache 2.0
+* Delete topic
+* Added support for checking sha256 after downloading files on both Android and Windows. On Windows, to use hash 256 checks, you need to use files that support different hashes, these are mainly installation files like exe and the like zip rar and other archives will not support hashes. Therefore, if you use archives for updating, then in the config you can disable this for Windows separately so that after downloading there is no hash check.
+* Config refactoring - now the config is divided into 3 categories: ```globalConfig```, ```uiConfig```, ```notificationConfig```
+* Added a request to show notifications but you can disable this if you do not want to make requests
+* Notifications have been refactored and there is now less code
+* Now after the update, files on Windows will be deleted in the same way as on Android.
+* Now, if the file has already been downloaded and the user has not updated to the next update, the plugin will delete the old file and download the new one. And also the plugin will not allow you to start the download again, but will open the file for updating. It works on both Windows and Android.
+* Update README.md
+
 ## 1.0.0-alpha.3
 
 * Added ```SourceUrl``` value. If set to true, the link specified in the json file will be followed

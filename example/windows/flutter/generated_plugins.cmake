@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  dynamic_color
+  permission_handler_windows
   update_center
   url_launcher_windows
 )

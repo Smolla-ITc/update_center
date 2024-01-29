@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../dialog/cupertino_alert_dialog.dart';
 import 'download_provider.dart';
@@ -11,6 +13,7 @@ import '../utils/constants.dart';
 import '../dialog/material_alert_dialog.dart';
 import '../dialog/material_bottom_sheet.dart';
 import '../dialog/download_bottom_sheets.dart';
+import 'memory_provider.dart';
 
 /// DialogProvider class to handle showing different types of update dialogs based on platform and configuration.
 class DialogProvider {
@@ -22,25 +25,25 @@ class DialogProvider {
       bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
+      String sha256checksum,
       String sourceUrl,
       UpdateCenterConfig config) {
     // For alertDialog type, shows platform-specific dialogs.
-    if (config.dialogType == DialogType.alertDialog) {
+    if (config.uiConfig.dialogType == DialogType.alertDialog) {
       // Shows a Cupertino style dialog for iOS, Material style for Android and Windows.
       if (Platform.isIOS) {
         _showCupertinoAlertDialog(
             versionName, changeLog, context, allowSkip, sourceUrl, config);
       } else if (Platform.isAndroid || Platform.isWindows) {
-        _showMaterialAlertDialog(
-            versionName, changeLog, sourceUrl, context, allowSkip, downloadState, downloadUrl, config);
+        _showMaterialAlertDialog(versionName, changeLog, sourceUrl, context,
+            allowSkip, downloadState, downloadUrl, sha256checksum, config);
       }
     } else {
       // Shows a bottom sheet dialog for other platforms or configuration.
-      _showMaterialBottomSheet(
-          versionName, changeLog, sourceUrl, context, allowSkip, downloadState, downloadUrl, config);
+      _showMaterialBottomSheet(versionName, changeLog, sourceUrl, context,
+          allowSkip, downloadState, downloadUrl, sha256checksum, config);
     }
   }
-
 
   /// Private method to show a Material style alert dialog.
   void _showMaterialAlertDialog(
@@ -51,6 +54,7 @@ class DialogProvider {
       bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
+      String sha256checksum,
       UpdateCenterConfig config) {
     showDialog(
       context: context,
@@ -70,7 +74,7 @@ class DialogProvider {
                 context: context,
                 builder: (context) => PopScope(
                       canPop: false,
-                      child: DownloadProgressBottomSheets(
+                      child: DownloadProgressBottomSheet(
                         downloadState: downloadState,
                         config: config,
                         allowSkip: allowSkip,
@@ -79,15 +83,15 @@ class DialogProvider {
 
             /// Checks the isSourceUrl value from the file in main.dart
             /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.
-            if (config.isSourceUrl) {
+            if (config.globalConfig.isSourceUrl) {
               _launchURL(sourceUrl);
             } else {
               if (Platform.isWindows) {
                 DownloadProvider.downloadUpdateWindows(downloadUrl, versionName,
-                    (progress) {}, config, downloadState);
+                    (progress) {}, config, downloadState, sha256checksum);
               } else if (Platform.isAndroid) {
                 DownloadProvider.downloadUpdateAndroid(downloadUrl, versionName,
-                    (progress) {}, config, downloadState);
+                    (progress) {}, config, downloadState, sha256checksum);
               }
             }
           },
@@ -144,6 +148,7 @@ class DialogProvider {
       bool allowSkip,
       DownloadState downloadState,
       String downloadUrl,
+      String sha256checksum,
       UpdateCenterConfig config) {
     showModalBottomSheet(
       isDismissible: allowSkip,
@@ -158,8 +163,30 @@ class DialogProvider {
             downloadState: downloadState,
             changeLog: changeLog,
             config: config,
-            onUpdate: () {
-              Navigator.of(context).pop();
+            onUpdate: () async {
+              if(allowSkip) {
+                Navigator.of(context).pop();
+              }
+
+              File localFile;
+              if (Platform.isWindows) {
+                localFile = await MemoryProvider.getLocalFileWindows(downloadUrl);
+              } else if (Platform.isAndroid) {
+                localFile = await MemoryProvider.getLocalFileAndroid(downloadUrl);
+              } else {
+                // Handle other platforms if necessary
+                return;
+              }
+
+              if (await localFile.exists()) {
+                log(localFile.path);
+
+                // Optionally, open the file directly
+                await OpenFilex.open(localFile.path);
+                return;
+              }
+
+              if(context.mounted){
               showModalBottomSheet(
                   isScrollControlled: true,
                   isDismissible: false,
@@ -167,24 +194,34 @@ class DialogProvider {
                   context: context,
                   builder: (context) => PopScope(
                         canPop: false,
-                        child: DownloadProgressBottomSheets(
+                        child: DownloadProgressBottomSheet(
                           downloadState: downloadState,
                           config: config,
                           allowSkip: allowSkip,
                         ),
-                      ));
+                      ));}
 
               /// Checks the isSourceUrl value from the file in main.dart
               /// if the value is true, it uses [_launchURL], otherwise, the download is in progress.
-              if (config.isSourceUrl) {
+              if (config.globalConfig.isSourceUrl) {
                 _launchURL(sourceUrl);
               } else {
                 if (Platform.isWindows) {
-                  DownloadProvider.downloadUpdateWindows(downloadUrl,
-                      versionName, (progress) {}, config, downloadState);
+                  DownloadProvider.downloadUpdateWindows(
+                      downloadUrl,
+                      versionName,
+                      (progress) {},
+                      config,
+                      downloadState,
+                      sha256checksum);
                 } else if (Platform.isAndroid) {
-                  DownloadProvider.downloadUpdateAndroid(downloadUrl,
-                      versionName, (progress) {}, config, downloadState);
+                  DownloadProvider.downloadUpdateAndroid(
+                      downloadUrl,
+                      versionName,
+                      (progress) {},
+                      config,
+                      downloadState,
+                      sha256checksum);
                 }
               }
             },

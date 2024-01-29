@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:http/http.dart' as h;
 import 'package:update_center/provider/memory_provider.dart';
@@ -17,11 +18,13 @@ class DownloadProvider {
   /// [config] - Configuration settings for the update process.
   /// [downloadState] - State of the download process.
   static Future<void> downloadUpdateAndroid(
-      String url,
-      String versionName,
-      Function(double) onProgress,
-      UpdateCenterConfig config,
-      DownloadState downloadState) async {
+    String url,
+    String versionName,
+    Function(double) onProgress,
+    UpdateCenterConfig config,
+    DownloadState downloadState,
+    String sha256checksum,
+  ) async {
     downloadState.isDownloading.value = true;
 
     var notificationProvider = NotificationProvider(config: config);
@@ -44,8 +47,11 @@ class DownloadProvider {
 
     response.stream.listen(
       (List<int> newBytes) {
-        notificationProvider.cancelNotification(1000);
+
+        notificationProvider.cancelNotification(3000);
+
         bytesDownloaded += newBytes.length;
+
         fileStream.add(newBytes);
 
         // Calculate progress
@@ -53,32 +59,60 @@ class DownloadProvider {
         onProgress(currentProgress);
 
         // Inside your download logic
-        downloadState.progress.value =
-            currentProgress; // currentProgress is a value between 0.0 and 1.0
-        downloadState.progressText.value =
-            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+        downloadState.progress.value = currentProgress; // currentProgress is a value between 0.0 and 1.0
+        downloadState.progressText.value = "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
-        if (currentProgress - lastNotifiedProgress >= 0.02 ||
-            currentProgress == 1.0) {
-          notificationProvider.showDownloadProgressNotification(
-              contentLength, bytesDownloaded, versionName);
-
+        if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
+          notificationProvider.showDownloadProgressNotification(contentLength, bytesDownloaded, versionName);
           lastNotifiedProgress = currentProgress;
         }
       },
       onDone: () async {
         await fileStream.flush();
         await fileStream.close();
+        notificationProvider.cancelNotification(1000);
+
+        /// Checks the value from the config. If true, then hash check is used.
+        if (config.globalConfig.isVerifiedSha256Android) {
+          downloadState.isVerifiedSha256.value = true;
+
+          notificationProvider.showGenericNotification(id: 4000, title: config.notificationConfig.verifiedSha256NotificationTitleText, body: config.notificationConfig.verifiedSha256NotificationBodyText);
+
+          String sha256Result = await compute(computeSha256, file);
+          if (sha256Result == sha256checksum) {
+            // Checksums match
+            await OpenFilex.open(fileName);
+            log("Checksum verification successful ${sha256Result.toString()}: used sha Android");
+          } else {
+            // Checksums do not match
+            log("Checksum verification failed ${sha256Result.toString()}",
+                name: 'Update Center');
+          }
+          notificationProvider.cancelNotification(4000);
+          downloadState.isVerifiedSha256.value = false;
+        } else {
+          // If a hash check is not used, open the file.
+          await OpenFilex.open(fileName);
+          log("$fileName: unused sha");
+        }
+
         downloadState.isDownloading.value = false;
-        await OpenFilex.open(fileName);
-        notificationProvider.cancelNotification(900);
       },
       onError: (e) async {
         await fileStream.close();
+
         downloadState.isDownloading.value = false;
-        notificationProvider.cancelNotification(900);
-        notificationProvider.showDownloadFailedNotification(versionName);
+
+        notificationProvider.cancelNotification(1000);
+
+        // Show notification about download failure
+        notificationProvider.showGenericNotification(
+            id: 3000, title:
+            config.notificationConfig.downloadFailedNotificationTitleText,
+            body: config.notificationConfig.downloadFailedNotificationBodyText
+        );
+
         log(e, name: 'Update Center');
       },
       cancelOnError: true,
@@ -87,11 +121,13 @@ class DownloadProvider {
 
   /// Same as Android only for Windows
   static Future<void> downloadUpdateWindows(
-      String url,
-      String versionName,
-      Function(double) onProgress,
-      UpdateCenterConfig config,
-      DownloadState downloadState) async {
+    String url,
+    String versionName,
+    Function(double) onProgress,
+    UpdateCenterConfig config,
+    DownloadState downloadState,
+    String sha256checksum,
+  ) async {
     downloadState.isDownloading.value = true;
 
     var response = await h.Client().send(h.Request('GET', Uri.parse(url)));
@@ -134,8 +170,28 @@ class DownloadProvider {
       onDone: () async {
         await fileStream.flush();
         await fileStream.close();
+
+        // Checks the value from the config. If true, then hash check is used.
+        if (config.globalConfig.isVerifiedSha256Windows) {
+          downloadState.isVerifiedSha256.value = true;
+
+          String sha256Result = await compute(computeSha256, file);
+          if (sha256Result == sha256checksum) {
+            // Checksums match
+            await OpenFilex.open(fileName);
+            log("Checksum verification successful ${sha256Result.toString()}: used sha Windows");
+          } else {
+            // Checksums do not match
+            log("Checksum verification failed ${sha256Result.toString()}", name: 'Update Center');
+          }
+          downloadState.isVerifiedSha256.value = false;
+
+        } else {
+          // If a hash check is not used, open the file.
+          await OpenFilex.open(fileName);
+          log("$fileName: unused sha");
+        }
         downloadState.isDownloading.value = false;
-        await OpenFilex.open(fileName);
       },
       onError: (e) async {
         await fileStream.close();

@@ -1,6 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import '../config/config.dart';
 import '../utils/download_utils.dart';
 import '../models/android.dart';
@@ -15,7 +18,6 @@ class CheckProvider {
   ///
   /// [androidData] - Data containing update details for Android.
   /// [packageInfo] - Current app package information.
-  /// [withDialog] - Flag to show dialog if true.
   /// [allowSkip] - Flag to allow skipping the update.
   /// [context] - Current BuildContext.
   /// [downloadState] - State manager for download progress.
@@ -24,7 +26,6 @@ class CheckProvider {
   Future<bool> checkAndroidUpdate(
     Map<String, dynamic> androidData,
     PackageInfo packageInfo,
-    bool withDialog,
     bool allowSkip,
     BuildContext context,
     DownloadState downloadState,
@@ -41,6 +42,7 @@ class CheckProvider {
       androidData['minSupport'],
     );
 
+    const String versionInfoFile = 'version_info.txt';
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     if (model.minSupport > buildNumber) {
@@ -49,7 +51,21 @@ class CheckProvider {
 
     // Check if the current build number is less than the update version code
     if (buildNumber < model.versionCode) {
-      if (withDialog) {
+        // Get the stored version info
+        String? storedVersion = await MemoryProvider.getVersionInfoAndroid();
+
+        // Compare with the new version
+        if (storedVersion != null && storedVersion != model.versionName) {
+          // Versions differ, delete the old file and stored version info
+          MemoryProvider.deleteFileDirectory();
+          // Delete the version info file
+          File('${(await getApplicationDocumentsDirectory()).path}/UpdateCenter/$versionInfoFile').delete();
+        }
+
+        // Save the new version info
+        await MemoryProvider.saveVersionInfoAndroid(model.versionName);
+
+        if(context.mounted){
         DialogProvider().showUpdateDialog(
             model.versionName,
             model.changeLog,
@@ -57,17 +73,18 @@ class CheckProvider {
             allowSkip,
             downloadState,
             model.downloadUrl,
+            model.sha256checksum,
             model.sourceUrl,
             config);
-      }
+        }
       downloadUrl = model.downloadUrl; // Set the download URL
 
       return true; // Return true to indicate that an update is available
     }
 
     if (buildNumber >= model.versionCode) {
-      if (config.isNoUpdateAvailableToast) {
-        Fluttertoast.showToast(msg: "No updates found");
+      if (config.globalConfig.isNoUpdateAvailableToast) {
+        Fluttertoast.showToast(msg: config.uiConfig.toastNoUpdateFoundText);
       }
       MemoryProvider.deleteFileDirectory();
       return false;
@@ -83,12 +100,12 @@ class CheckProvider {
   Future<bool> checkIOSUpdate(
     Map<String, dynamic> iosData,
     PackageInfo packageInfo,
-    bool withDialog,
     bool allowSkip,
     BuildContext context,
     DownloadState downloadState,
     UpdateCenterConfig config,
-    String downloadUrl,
+    String downloadUrl, // This value is not used in the iOS model
+    String sha256checksum, // This value is not used in the iOS model
   ) async {
     IOSModel model = IOSModel(
       iosData['versionName'],
@@ -106,7 +123,6 @@ class CheckProvider {
 
     // Check if the current build number is less than the update version code
     if (buildNumber < model.versionCode) {
-      if (withDialog) {
         DialogProvider().showUpdateDialog(
           model.versionName,
           model.changeLog,
@@ -115,14 +131,14 @@ class CheckProvider {
           downloadState,
           downloadUrl,
           model.sourceUrl,
+          sha256checksum,
           config,
         );
-      }
       return true; // Return true to indicate that an update is available
     }
 
     if (buildNumber >= model.versionCode) {
-      if (config.isCheckStart == false) {
+      if (config.globalConfig.isCheckStart == false) {
         Fluttertoast.showToast(msg: "No updates found");
       }
       return false;
@@ -136,7 +152,6 @@ class CheckProvider {
   Future<bool> checkWindowsUpdate(
     Map<String, dynamic> windowsData,
     PackageInfo packageInfo,
-    bool withDialog,
     bool allowSkip,
     BuildContext context,
     DownloadState downloadState,
@@ -153,6 +168,7 @@ class CheckProvider {
       windowsData['minSupport'],
     );
 
+    const String versionInfoFile = 'version_info.txt';
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     if (model.minSupport > buildNumber) {
@@ -161,7 +177,22 @@ class CheckProvider {
 
     // Check if the current build number is less than the update version code
     if (buildNumber < model.versionCode) {
-      if (withDialog) {
+      // Get the stored version info
+      String? storedVersion = await MemoryProvider.getVersionInfoWindows();
+
+      // Compare with the new version
+      if (storedVersion != null && storedVersion != model.versionName) {
+        // Versions differ, delete the old file and stored version info
+        MemoryProvider.deleteFileDirectoryWindows();
+        // Delete the version info file
+        File('${(await getDownloadsDirectory())?.path}/Update Center/$versionInfoFile').delete();
+      }
+
+      // Save the new version info
+      await MemoryProvider.saveVersionInfoWindows(model.versionName);
+
+      if(context.mounted){
+
         DialogProvider().showUpdateDialog(
             model.versionName,
             model.changeLog,
@@ -169,6 +200,7 @@ class CheckProvider {
             allowSkip,
             downloadState,
             model.downloadUrl,
+            model.sha256checksum,
             model.sourceUrl,
             config);
       }
@@ -177,9 +209,13 @@ class CheckProvider {
     }
 
     if (buildNumber >= model.versionCode) {
-      if (config.isCheckStart == false) {
-        Fluttertoast.showToast(msg: "No updates found");
+      if (config.globalConfig.isNoUpdateAvailableToast) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+          content: Text(config.uiConfig.toastNoUpdateFoundText),
+          duration: const Duration(seconds: 1),
+        ));
       }
+      MemoryProvider.deleteFileDirectoryWindows();
       return false;
     }
     return false; // No update available

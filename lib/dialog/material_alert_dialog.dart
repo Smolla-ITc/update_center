@@ -30,23 +30,23 @@ class MaterialAlertDialog extends StatelessWidget {
       canPop: allowSkip,
       child: AlertDialog(
         scrollable: true,
-        icon: config.customIconTitle,
+        icon: config.uiConfig.customIconTitle,
         title: Text(versionName,
-            textAlign: TextAlign.center, style: config.alertVersionNameStyle),
+            textAlign: TextAlign.center, style: config.uiConfig.alertVersionNameStyle),
         content: Text(
           changeLog,
           textAlign: TextAlign.start,
-          style: config.alertChangeLogTextStyle,
+          style: config.uiConfig.alertChangeLogTextStyle,
         ),
         actions: <Widget>[
           if (allowSkip)
             TextButton(
               onPressed: onSkip,
-              child: Text(config.skipButtonText),
+              child: Text(config.uiConfig.skipButtonText),
             ),
           FilledButton(
             onPressed: onUpdate,
-            child: Text(config.updateButtonText),
+            child: Text(config.uiConfig.updateButtonText),
           ),
         ],
       ),

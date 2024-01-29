@@ -1,12 +1,14 @@
 library update_center;
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as h;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:platform/platform.dart';
 import 'package:update_center/provider/check_provider.dart';
 import 'package:update_center/provider/notification_provider.dart';
+import 'package:update_center/provider/permission_provider.dart';
 import 'utils/download_utils.dart';
 import 'config/config.dart';
 export 'config/config.dart';
@@ -21,27 +23,30 @@ class UpdateCenter {
   UpdateCenter({
     required this.context, // The context from which this instance is created.
     required this.urlJson, // The URL to fetch update JSON data.
-    required this.changeLog, // The changelog for the update.
-    required this.versionName, // The version name of the update.
     required this.config, // Configuration settings for UpdateCenter.
     this.allowSkip = true, // Flag to allow skipping the update.
   }) {
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    if (config.globalConfig.isRequestForNotifications) {
+        PermissionProvider.requestForNotifications();
+    }
+
     // If set in config, automatically check for updates after the first frame is rendered.
-    if (config.isCheckStart) {
+    if (config.globalConfig.isCheckStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         check();
       });
     }
     // Initialize notification provider with the configuration.
     var notificationProvider = NotificationProvider(config: config);
-    WidgetsFlutterBinding.ensureInitialized();
     notificationProvider.initialize();
   }
 
   final BuildContext context;
   final String urlJson;
-  String changeLog;
-  String versionName;
+
   bool allowSkip;
   final UpdateCenterConfig config;
 
@@ -52,8 +57,11 @@ class UpdateCenter {
   /// URL for downloading the update.
   String downloadUrl = '';
 
+  /// Plug for iOS model
+  String sha256checksum = '';
+
   /// Checks for updates based on the current platform and configuration.
-  Future<bool> check({withDialog = true}) async {
+  Future<bool> check() async {
     // Retrieve package information.
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -73,12 +81,10 @@ class UpdateCenter {
       if (context.mounted) {
         // Check for updates based on the operating system.
         switch (platform.operatingSystem) {
-
           case "android":
             return CheckProvider().checkAndroidUpdate(
               data["android"],
               packageInfo,
-              withDialog,
               allowSkip,
               context,
               downloadState,
@@ -90,19 +96,18 @@ class UpdateCenter {
             return CheckProvider().checkIOSUpdate(
               data["ios"],
               packageInfo,
-              withDialog,
               allowSkip,
               context,
-              downloadState,
+              downloadState, // This value is not used in the iOS model
               config,
-              downloadUrl,
+              downloadUrl, // This value is not used in the iOS model
+              sha256checksum, // This value is not used in the iOS model
             );
 
           case "windows":
             return CheckProvider().checkWindowsUpdate(
               data["windows"],
               packageInfo,
-              withDialog,
               allowSkip,
               context,
               downloadState,
@@ -117,7 +122,7 @@ class UpdateCenter {
       return false;
     } catch (e) {
       // Handle any exceptions during the update check.
-      print("Error in UpdateCenter.check: $e");
+      log("Error in UpdateCenter.check: $e");
       return false;
     }
   }

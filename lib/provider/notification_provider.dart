@@ -1,89 +1,63 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../config/config.dart';
 
-/// NotificationProvider manages the creation and control of notifications for the Update Center.
+
+/// id notification
+///
+/// 1000 Download notification
+/// 2000 Download complete
+/// 3000 Download failed
+/// 4000 Verified sha256
+
+
+
+/// The notification provider stores all the methods for displaying notifications to make them easier to manage.
 class NotificationProvider {
-  /// Configuration for the Update Center.
   final UpdateCenterConfig config;
 
-  /// Constructor for NotificationProvider requiring the Update Center configuration.
   const NotificationProvider({
     required this.config,
   });
 
-  /// Singleton instance of FlutterLocalNotificationsPlugin.
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  /// Initializes the notification settings.
-  ///
-  /// It configures the notification's appearance and behavior based on the provided configuration.
+  final int downloadIdNotification = 1000;
+  final int downloadIdN = 1000;
+
+  /// Initializing the notification plugin
   Future<void> initialize() async {
-    await _initialize(config.defaultIcon);
-  }
-
-  /// Displays a notification showing the download progress.
-  ///
-  /// [maxProgress] - Maximum value for the progress.
-  /// [progress] - Current value for the progress.
-  /// [versionName] - Name of the version being downloaded.
-  Future<void> showDownloadProgressNotification(
-      int maxProgress, int progress, String versionName) async {
-    await _showDownloadProgressNotification(
-      maxProgress,
-      progress,
-      versionName,
-      config.downloadProgressNotificationTextTitle,
-      config.downloadProgressNotificationTextBody,
-      config.showProgress,
-      config.channelShowBadge,
-    );
-  }
-
-  /// Displays a notification indicating that the download has failed.
-  ///
-  /// [versionName] - Name of the version for which the download failed.
-  Future<void> showDownloadFailedNotification(String versionName) async {
-    await _showDownloadFailedNotification(
-        versionName,
-        config.downloadFailedNotificationTitleText,
-        config.downloadFailedNotificationBodyText);
-  }
-
-  /// Cancels a notification with the given [id].
-  Future<void> cancelNotification(int id) async {
-    await _cancelNotification(id);
-  }
-
-  // Private method to initialize the notification plugin with settings.
-  static Future<void> _initialize(String defaultIcon) async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings(defaultIcon);
+    var initializationSettingsAndroid = AndroidInitializationSettings(config.notificationConfig.defaultIcon);
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  // Private method to show a download progress notification.
-  static Future<void> _showDownloadProgressNotification(
-    int maxProgress,
-    int progress,
-    String versionName,
-    String downloadProgressNotificationTextTitle,
-    String downloadProgressNotificationTextBody,
-    bool showProgress,
-    bool channelShowBadge,
-  ) async {
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    required NotificationDetails platformChannelSpecifics,
+  }) async {
+    await flutterLocalNotificationsPlugin.show(
+      id, // Notification ID
+      title, // Title
+      body, // Body
+      platformChannelSpecifics,
+    );
+  }
+
+ /// Separate code to show file download progress
+  Future<void> showDownloadProgressNotification(int maxProgress, int progress, String versionName) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',
-      channelShowBadge: channelShowBadge,
+      subText: versionName,
+      channelShowBadge: config.notificationConfig.channelShowBadge,
       importance: Importance.low,
       priority: Priority.low,
-      onlyAlertOnce: true,
-      subText: versionName,
-      showProgress: showProgress,
+      onlyAlertOnce: false,
+      showProgress: config.notificationConfig.showProgress,
       maxProgress: maxProgress,
       progress: progress,
     );
@@ -92,45 +66,44 @@ class NotificationProvider {
       android: androidPlatformChannelSpecifics,
     );
 
-    await flutterLocalNotificationsPlugin.show(
-      900, // Notification ID
-      downloadProgressNotificationTextTitle, // Title
-      downloadProgressNotificationTextBody, // Body
-      platformChannelSpecifics,
-      payload: 'download_payload',
+    await showNotification(
+      id: 1000,
+      title: config.notificationConfig.downloadProgressNotificationTextTitle,
+      body: config.notificationConfig.downloadProgressNotificationTextBody,
+      platformChannelSpecifics: platformChannelSpecifics,
+
     );
   }
 
-  // Private method to show a download failed notification.
-  static Future<void> _showDownloadFailedNotification(
-    String versionName,
-    String downloadFailedNotificationTitleText,
-    String downloadFailedNotificationBodyText,
-  ) async {
+ /// Universal code for notifications that is used throughout the plugin
+  Future<void> showGenericNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',
       channelShowBadge: true,
       importance: Importance.low,
       priority: Priority.low,
-      onlyAlertOnce: true,
+      onlyAlertOnce: false,
     );
 
     var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
 
-    await flutterLocalNotificationsPlugin.show(
-      1000, // Notification ID
-      downloadFailedNotificationTitleText, // Title
-      downloadFailedNotificationBodyText, // Body
-      platformChannelSpecifics,
-      payload: 'download_failed_payload',
+    await showNotification(
+      id: id,
+      title: title,
+      body: body,
+      platformChannelSpecifics: platformChannelSpecifics,
     );
   }
 
-  // Private method to cancel a notification.
-  static Future<void> _cancelNotification(int id) async {
+  /// Code to cancel notifications
+  Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
   }
 }
