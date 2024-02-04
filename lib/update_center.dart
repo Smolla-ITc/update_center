@@ -1,7 +1,6 @@
 library update_center;
 
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as h;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -9,6 +8,7 @@ import 'package:platform/platform.dart';
 import 'package:update_center/provider/check_provider.dart';
 import 'package:update_center/provider/notification_provider.dart';
 import 'package:update_center/provider/permission_provider.dart';
+import 'provider/talker_provider.dart';
 import 'utils/download_utils.dart';
 import 'config/config.dart';
 export 'config/config.dart';
@@ -74,7 +74,7 @@ class UpdateCenter {
       }
 
       // Decode the JSON response.
-      Map<String, dynamic> data = jsonDecode(response.body.toString());
+      Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
 
       // Ensure the context is still valid.
       if (context.mounted) {
@@ -121,7 +121,7 @@ class UpdateCenter {
       return false;
     } catch (e) {
       // Handle any exceptions during the update check.
-      log("Error in UpdateCenter.check: $e");
+      TalkerProvider(config).talker.handle("Error in UpdateCenter.check: $e");
       return false;
     }
   }

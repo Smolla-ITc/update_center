@@ -22,6 +22,7 @@ String formatBytes(int bytes, int decimals) {
   return '${(bytes / pow(k, i)).toStringAsFixed(dm)}${sizes[i]}';
 }
 
+/// Used to extract sha256 from a file and is done in a separate thread so that there are no conflicts
 Future<String> computeSha256(File file) async {
   var fileBytes = await file.readAsBytes();
   var sha256Result = sha256.convert(fileBytes);

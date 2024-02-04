@@ -1,3 +1,11 @@
+## 1.0.0-beta.1
+
+* Added utf-8 encoding
+* The json model order has been slightly changed
+* Added custom log (talker 4.0.0)
+* Updated some dependencies
+* Update readme
+
 ## 1.0.0-alpha.5
 
 * Changed the way version data is stored to SharedPreferences

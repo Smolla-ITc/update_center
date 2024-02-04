@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:open_filex/open_filex.dart';
@@ -6,6 +5,7 @@ import 'package:http/http.dart' as h;
 import 'package:update_center/provider/memory_provider.dart';
 import 'package:update_center/provider/notification_provider.dart';
 import 'package:update_center/config/config.dart';
+import 'package:update_center/provider/talker_provider.dart';
 import '../utils/download_utils.dart';
 
 /// Provides functionality to handle the download process for updates.
@@ -91,18 +91,20 @@ class DownloadProvider {
           if (sha256Result == sha256checksum) {
             // Checksums match
             await OpenFilex.open(fileName);
-            log("Checksum verification successful ${sha256Result.toString()}: used sha Android");
+            TalkerProvider(config).talker.info(
+                "Checksum verification successful ${sha256Result.toString()}: used sha Android");
           } else {
             // Checksums do not match
-            log("Checksum verification failed ${sha256Result.toString()}",
-                name: 'Update Center');
+            TalkerProvider(config).talker.info(
+                "Checksum verification failed ${sha256Result.toString()}");
           }
           notificationProvider.cancelNotification(4000);
           downloadState.isVerifiedSha256.value = false;
         } else {
           // If a hash check is not used, open the file.
           await OpenFilex.open(fileName);
-          log("$fileName: unused sha");
+
+          TalkerProvider(config).talker.info("$fileName: unused sha");
         }
 
         downloadState.isDownloading.value = false;
@@ -121,7 +123,7 @@ class DownloadProvider {
                 config.notificationConfig.downloadFailedNotificationTitleText,
             body: config.notificationConfig.downloadFailedNotificationBodyText);
 
-        log(e, name: 'Update Center');
+        TalkerProvider(config).talker.error(e);
       },
       cancelOnError: true,
     );
@@ -187,24 +189,26 @@ class DownloadProvider {
           if (sha256Result == sha256checksum) {
             // Checksums match
             await OpenFilex.open(fileName);
-            log("Checksum verification successful ${sha256Result.toString()}: used sha Windows");
+
+            TalkerProvider(config).talker.info(
+                "Checksum verification successful ${sha256Result.toString()}: used sha Windows");
           } else {
             // Checksums do not match
-            log("Checksum verification failed ${sha256Result.toString()}",
-                name: 'Update Center');
+            TalkerProvider(config).talker.info(
+                "Checksum verification failed ${sha256Result.toString()}");
           }
           downloadState.isVerifiedSha256.value = false;
         } else {
           // If a hash check is not used, open the file.
           await OpenFilex.open(fileName);
-          log("$fileName: unused sha");
+          TalkerProvider(config).talker.info("$fileName: unused sha");
         }
         downloadState.isDownloading.value = false;
       },
       onError: (e) async {
         await fileStream.close();
         downloadState.isDownloading.value = false;
-        log(e, name: 'Update Center');
+        TalkerProvider(config).talker.error(e);
       },
       cancelOnError: true,
     );

@@ -30,8 +30,8 @@ class CheckProvider {
     String downloadUrl,
   ) async {
     AndroidModel model = AndroidModel(
-      androidData['downloadUrl'],
       androidData['versionName'],
+      androidData['downloadUrl'],
       androidData['changeLog'],
       androidData['sourceUrl'],
       androidData['sha256checksum'],
@@ -153,8 +153,8 @@ class CheckProvider {
     String downloadUrl,
   ) async {
     WindowsModel model = WindowsModel(
-      windowsData['downloadUrl'],
       windowsData['versionName'],
+      windowsData['downloadUrl'],
       windowsData['changeLog'],
       windowsData['sourceUrl'],
       windowsData['sha256checksum'],

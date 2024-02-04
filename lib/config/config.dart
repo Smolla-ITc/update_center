@@ -10,6 +10,8 @@ class GlobalConfig {
   final bool isVerifiedSha256Windows;
   final bool isRequestForNotifications;
   final bool isOpenFile;
+  final bool isEnabledLog;
+  final bool isMarkdownChangelog;
 
   GlobalConfig({
     this.isCheckStart = false,
@@ -19,6 +21,8 @@ class GlobalConfig {
     this.isVerifiedSha256Windows = false,
     this.isRequestForNotifications = false,
     this.isOpenFile = false,
+    this.isEnabledLog = false,
+    this.isMarkdownChangelog = false,
   });
 }
 

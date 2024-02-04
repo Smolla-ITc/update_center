@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Center v1.0.0-alpha.5'),
+        title: const Text('Update Center v1.0.0-alpha.6'),
       ),
       body: Center(
           child: OutlinedButton(
@@ -71,7 +71,9 @@ class _MyAppState extends State<MyApp> {
               isRequestForNotifications:
                   true, // Allows you to request notifications or not
               isOpenFile:
-                  true, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
+                  false, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
+              isEnabledLog:
+                  true, // If you want logs to be shown or not, you basically need to if you are releasing a release and don’t want anyone to see the logs
             ),
             uiConfig: UIConfig(
               updateButtonText: 'Install', // Text for the update button

@@ -1,6 +1,6 @@
 name: update_center_example
 description: "Demonstrates how to use the update_center plugin."
-version: 1.14.3+11
+version: 1.23.0+11
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
