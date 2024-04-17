@@ -1,6 +1,10 @@
+import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:update_center/update_center.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(
@@ -27,6 +31,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late UpdateCenter updateCenter;
 
+  static const String _apiUrl =
+      'https://example.com/UpdateCenter/update_center.json';
+
+  _launchURL(String sourceUrl) async {
+    final Uri url = Uri.parse(sourceUrl);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $sourceUrl');
+    }
+  }
+
   @override
   void initState() {
     initializeUpdateCenter();
@@ -37,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Center v1.0.0-alpha.6'),
+        title: const Text('Update Center v1.0.0-beta.2'),
       ),
       body: Center(
           child: OutlinedButton(
@@ -49,79 +63,204 @@ class _MyAppState extends State<MyApp> {
   }
 
   void initializeUpdateCenter() {
+
     // Main plugin settings
     updateCenter = UpdateCenter(
         context: context,
-        urlJson:
-            'https://example.com/UpdateCenter/update_center.json', // URL to get JSON data for updates (replace with yours)
+        urlJson: _apiUrl, // URL to get JSON data for updates (replace with yours)
 
-        // Plugin configuration (You can embed your own translation configuration so that the plugin looks harmonious with your application.)
         config: UpdateCenterConfig(
             globalConfig: GlobalConfig(
-              isCheckStart:
-                  true, // Whether to check for updates when the app starts
-              isNoUpdateAvailableToast:
-                  true, // Whether to show a toast message if no updates are available
-              isSourceUrl:
-                  false, // You can enable clicking a link instead of downloading a file
-              isVerifiedSha256Android:
-                  true, // Responsible for enabling sha256 checks after the file is downloaded
-              isVerifiedSha256Windows:
-                  true, // Responsible for enabling sha256 checks after the file is downloaded
-              isRequestForNotifications:
-                  true, // Allows you to request notifications or not
-              isOpenFile:
-                  false, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
-              isEnabledLog:
-                  true, // If you want logs to be shown or not, you basically need to if you are releasing a release and don’t want anyone to see the logs
-            ),
-            uiConfig: UIConfig(
-              updateButtonText: 'Install', // Text for the update button
-              skipButtonText: 'Later', // Text for the skip button
-              updateAvailableText:
-                  'Update available', // Text indicating an update is available
-              changelogText: 'Changelog', // Text for the changelog section
-              titleDownloadBottomSheets:
-                  'Downloading...', // Title text for the downloading bottom sheet
-              titleVerifiedSha256BottomSheets:
-                  'Verified sha256...', // Header text for hash check bottom sheet 256
-              toastNoUpdateFoundText: 'No update found',
+                isCheckStart: true, // Whether to check for updates when the app starts
+                isNoUpdateAvailableToast: true, // Whether to show a toast message if no updates are available
+                isSourceUrl: false, // You can enable clicking a link instead of downloading a file
+                isRequestForNotifications: true, // Allows you to request notifications or not
+                isOpenFile: true, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
 
-              // Custom text style (Uncomment to apply them)
-              alertChangeLogTextStyle:
-                  const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-              alertVersionNameStyle:
-                  const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              bottomSheetChangeLogTextStyle:
-                  const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              bottomSheetVersionNameTextStyle:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                // Widgets for displaying a notification about the unavailability of an update
+                androidNoUpdateAvailableBuilder: (BuildContext context) {
+                  Fluttertoast.showToast(msg: 'No updates found');
+                },
+                iosNoUpdateAvailableBuilder: (BuildContext context) {
+                  Fluttertoast.showToast(msg: 'No updates found');
+                },
+                windowsNoUpdateAvailableBuilder: (BuildContext context) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('No updates found'),
+                    duration: Duration(seconds: 2),
+                  ));
+                },
 
-              customIconTitle: const Icon(
-                Icons.downloading_outlined,
-                size: 26,
-              ), // Icon for the bottom sheet
-              dialogType: DialogType
-                  .bottomSheet, // Type of dialog to show for updates (alert dialog or bottom sheet)
-            ),
+                // Constructors of dialogs or widgets for each platform to display the update itself.
+                androidDialogBuilder: (BuildContext context,
+                    AndroidModel model,
+                    UpdateCenterConfig config,
+                    DownloadState downloadState,
+                    bool allowSkip) {
+                  return showDialog(
+                    context: context,
+                    barrierDismissible: allowSkip,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(model.versionName),
+                        content: Text(model.changeLog),
+                        actions: [
+                          if (allowSkip)
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("Close"),
+                            ),
+
+                          // Changes state to show loading percentage
+                          ValueListenableBuilder<bool>(
+                            valueListenable: downloadState.isDownloading,
+                            builder: (context, isDownloading, child) {
+                              return TextButton(
+                                onPressed: isDownloading
+                                    ? null
+                                    : () async {
+                                        downloadState.isDownloading.value =
+                                            false;
+                                        // Ensure the button does nothing while downloading
+                                        await OnDownload.initiateUpdate(
+                                          url: model.downloadUrl,
+                                          versionName: model.versionName,
+                                          config: config,
+                                          downloadState: downloadState,
+                                          sourceUrl: model.sourceUrl,
+                                          launchUrl: (url) => _launchURL(url),
+                                        );
+                                      },
+                                child: isDownloading
+                                    ? ValueListenableBuilder<double>(
+                                        valueListenable: downloadState.progress,
+                                        builder: (context, progress, _) {
+                                          int progressValue =
+                                              (progress * 100).toInt();
+                                          return AnimatedFlipCounter(
+                                            suffix: '%',
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            value: progressValue,
+                                            textStyle: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground),
+                                          );
+                                        },
+                                      )
+                                    : const Text('Download'),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+                iosDialogBuilder: (BuildContext context,
+                    IOSModel model,
+                    UpdateCenterConfig config,
+                    DownloadState downloadState,
+                    bool allowSkip) {
+                  return showDialog(
+                      context: context,
+                      barrierDismissible: allowSkip,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: Text(model.versionName),
+                          content: Text(model.changeLog),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              child: const Text("Close"),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            CupertinoDialogAction(
+                              onPressed: () => _launchURL(model.sourceUrl),
+                              child: const Text("Open to url"),
+                            ),
+                          ],
+                        );
+                      });
+                },
+                windowsDialogBuilder: (BuildContext context,
+                    WindowsModel model,
+                    UpdateCenterConfig config,
+                    DownloadState downloadState,
+                    bool allowSkip) {
+                  return showDialog(
+                    context: context,
+                    barrierDismissible: allowSkip,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(model.versionName),
+                        content: Text(model.changeLog),
+                        actions: [
+                          if (allowSkip)
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("Close"),
+                            ),
+
+                          // Changes state to show loading percentage
+                          ValueListenableBuilder<bool>(
+                            valueListenable: downloadState.isDownloading,
+                            builder: (context, isDownloading, child) {
+                              return TextButton(
+                                onPressed: isDownloading
+                                    ? null
+                                    : () async {
+                                        // Disables the button so it doesn't cause new load calls when clicked
+                                        downloadState.isDownloading.value = false;
+
+                                        // Download call
+                                        await OnDownload.initiateUpdate(
+                                          url: model.downloadUrl,
+                                          versionName: model.versionName,
+                                          config: config,
+                                          downloadState: downloadState,
+                                          sourceUrl: model.sourceUrl,
+                                          launchUrl: (url) => _launchURL(url),
+                                        );
+                                      },
+                                child: isDownloading
+                                    ? ValueListenableBuilder<double>(
+                                        valueListenable: downloadState.progress,
+                                        builder: (context, progress, _) {
+                                          int progressValue =
+                                              (progress * 100).toInt();
+                                          return AnimatedFlipCounter(
+                                            suffix: '%',
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            value: progressValue,
+                                            textStyle: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground),
+                                          );
+                                        },
+                                      )
+                                    : const Text('Download'),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                }),
+
             notificationConfig: NotificationConfig(
-              defaultIcon:
-                  '@drawable/ic_update_center', // Icon for the notification (Replace the path with another icon)
-              downloadProgressNotificationTextTitle:
-                  'Downloading...', // Title header in notification
-              downloadProgressNotificationTextBody:
-                  '', // Body text for the download progress notification
-              downloadFailedNotificationTitleText:
-                  'Download failed', // Title for the failed download notification
-              downloadFailedNotificationBodyText:
-                  'An error occurred while downloading update. Check your internet connections and try again', // Body text for the failed download notification
-              verifiedSha256NotificationTitleText: 'Verified sha256...',
-              verifiedSha256NotificationBodyText: '',
+              defaultIcon: '@drawable/ic_update_center', // Icon for the notification (Replace the path with another icon)
+              downloadProgressNotificationTextTitle: 'Downloading...', // Title header in notification
+              downloadProgressNotificationTextBody: '', // Body text for the download progress notification
+              downloadFailedNotificationTitleText: 'Download failed', // Title for the failed download notification
+              downloadFailedNotificationBodyText: 'An error occurred while downloading update. Check your internet connections and try again', // Body text for the failed download notification
 
-              showProgress:
-                  true, // Whether to show download progress in the notification
-              channelShowBadge:
-                  true, // Whether to show a badge on the notification channel
+              showProgress: true, // Whether to show download progress in the notification
+              channelShowBadge: true, // Whether to show a badge on the notification channel
             )));
   }
 

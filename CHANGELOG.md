@@ -1,3 +1,18 @@
+## 1.0.0-beta.2
+
+### *ATTENTION! There are a lot of breaking changes in this update!!*
+
+#### **Strong changes or Additions**
+- The most important change is that now you can make your own dialogues or whatever you want right in the config! this will allow you to make better integration with your application!.
+- Now you can add a notification that the update is not available right now just like dialogs through the config.
+
+#### **Normal changes**
+- The code has been slightly refactored.
+- The structure of the json model has been slightly changed.
+- Talker logger plugin removed.
+- Removed sha256 check because it does not work correctly.
+- Libraries updated.
+
 ## 1.0.0-beta.1
 
 * Added utf-8 encoding

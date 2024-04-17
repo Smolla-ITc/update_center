@@ -1,12 +1,11 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../config/config.dart';
 
-/// id notification
+/// Id notification
 ///
 /// 1000 Download notification
 /// 2000 Download complete
 /// 3000 Download failed
-/// 4000 Verified sha256
 
 /// The notification provider stores all the methods for displaying notifications to make them easier to manage.
 class NotificationProvider {
@@ -40,8 +39,8 @@ class NotificationProvider {
   }) async {
     await flutterLocalNotificationsPlugin.show(
       id, // Notification ID
-      title, // Title
-      body, // Body
+      title,
+      body,
       platformChannelSpecifics,
     );
   }

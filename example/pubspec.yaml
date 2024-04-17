@@ -1,6 +1,6 @@
 name: update_center_example
 description: "Demonstrates how to use the update_center plugin."
-version: 1.23.0+11
+version: 2.0.0+200
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -28,8 +28,11 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
-  dynamic_color: ^1.6.9
+  cupertino_icons: ^1.0.8
+  dynamic_color: ^1.7.0
+  url_launcher: ^6.2.6
+  animated_flip_counter: ^0.3.4
+  fluttertoast: ^8.2.5
 
 dev_dependencies:
   integration_test:
@@ -42,7 +45,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

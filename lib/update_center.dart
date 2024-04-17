@@ -1,18 +1,27 @@
 library update_center;
 
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as h;
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:platform/platform.dart';
 import 'package:update_center/provider/check_provider.dart';
 import 'package:update_center/provider/notification_provider.dart';
 import 'package:update_center/provider/permission_provider.dart';
-import 'provider/talker_provider.dart';
 import 'utils/download_utils.dart';
 import 'config/config.dart';
+
 export 'config/config.dart';
 export 'utils/constants.dart';
+export 'models/android.dart';
+export 'models/ios.dart';
+export 'models/windows.dart';
+export 'provider/memory_provider.dart';
+export 'provider/download_provider.dart';
+export 'utils/download_utils.dart';
+export 'package:open_filex/open_filex.dart';
+export 'utils/onDownload.dart';
 
 /// The main class responsible for checking and handling updates.
 class UpdateCenter {
@@ -45,19 +54,11 @@ class UpdateCenter {
 
   final BuildContext context;
   final String urlJson;
-
-  bool allowSkip;
+  final bool allowSkip;
   final UpdateCenterConfig config;
 
-  /// For testing purposes, allows mocking of the platform.
-  @visibleForTesting
-  static Platform platform = const LocalPlatform();
-
   /// URL for downloading the update.
-  String downloadUrl = '';
-
-  /// Plug for iOS model
-  String sha256checksum = '';
+  final String _downloadUrl = '';
 
   /// Checks for updates based on the current platform and configuration.
   Future<bool> check() async {
@@ -79,7 +80,7 @@ class UpdateCenter {
       // Ensure the context is still valid.
       if (context.mounted) {
         // Check for updates based on the operating system.
-        switch (platform.operatingSystem) {
+        switch (Platform.operatingSystem) {
           case "android":
             return CheckProvider().checkAndroidUpdate(
               data["android"],
@@ -88,7 +89,7 @@ class UpdateCenter {
               context,
               downloadState,
               config,
-              downloadUrl,
+              _downloadUrl,
             );
 
           case "ios":
@@ -99,8 +100,7 @@ class UpdateCenter {
               context,
               downloadState, // This value is not used in the iOS model
               config,
-              downloadUrl, // This value is not used in the iOS model
-              sha256checksum, // This value is not used in the iOS model
+              _downloadUrl, // This value is not used in the iOS model
             );
 
           case "windows":
@@ -111,7 +111,7 @@ class UpdateCenter {
               context,
               downloadState,
               config,
-              downloadUrl,
+              _downloadUrl,
             );
 
           default:
@@ -121,7 +121,7 @@ class UpdateCenter {
       return false;
     } catch (e) {
       // Handle any exceptions during the update check.
-      TalkerProvider(config).talker.handle("Error in UpdateCenter.check: $e");
+      log("Error in UpdateCenter.check: $e");
       return false;
     }
   }

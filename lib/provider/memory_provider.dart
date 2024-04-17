@@ -5,12 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// A utility class for handling file storage operations in the application.
 class MemoryProvider {
-  static const String versionInfoKey = 'version_info';
+  static const String _versionInfoKey = 'version_info';
 
   /// Retrieves a local file reference for Android, based on a given URL.
   /// The file is expected to be in the application's document directory.
   static Future<File> getLocalFileAndroid(String url) async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationCacheDirectory();
     final filename = url.split('/').last;
     return File('${directory.path}/UpdateCenter/$filename');
   }
@@ -54,7 +54,7 @@ class MemoryProvider {
   /// Provides the UpdateCenter directory in the application's documents directory for Android.
   /// Creates the directory if it doesn't exist.
   static Future<Directory> directoryAndroid() async {
-    Directory tempDir = await getApplicationDocumentsDirectory();
+    Directory tempDir = await getApplicationCacheDirectory();
     Directory updateDirectory = Directory('${tempDir.path}/UpdateCenter/');
 
     if (!await updateDirectory.exists()) {
@@ -86,24 +86,24 @@ class MemoryProvider {
   // Saves the version information of the downloaded file
   static Future<void> saveVersionInfoAndroid(String versionName) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(versionInfoKey, versionName);
+    await prefs.setString(_versionInfoKey, versionName);
   }
 
   // Retrieves the version information of the downloaded file
   static Future<String?> getVersionInfoAndroid() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(versionInfoKey);
+    return prefs.getString(_versionInfoKey);
   }
 
   // Saves the version information of the downloaded file
   static Future<void> saveVersionInfoWindows(String versionName) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(versionInfoKey, versionName);
+    await prefs.setString(_versionInfoKey, versionName);
   }
 
   // Retrieves the version information of the downloaded file
   static Future<String?> getVersionInfoWindows() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(versionInfoKey);
+    return prefs.getString(_versionInfoKey);
   }
 }

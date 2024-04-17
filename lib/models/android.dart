@@ -1,6 +1,6 @@
 /// json model for android
 class AndroidModel {
-  String versionName, downloadUrl, changeLog, sourceUrl, sha256checksum;
+  String versionName, downloadUrl, changeLog, sourceUrl;
   int versionCode, minSupport;
 
   AndroidModel(
@@ -9,7 +9,6 @@ class AndroidModel {
     this.downloadUrl,
     this.changeLog,
     this.sourceUrl,
-    this.sha256checksum,
 
     /// int
     this.versionCode,
