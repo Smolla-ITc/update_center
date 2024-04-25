@@ -31,8 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late UpdateCenter updateCenter;
 
-  static const String _apiUrl =
-      'https://example.com/UpdateCenter/update_center.json';
+  static const String _apiUrl = 'https://example.com/UpdateCenter/update_center.json';
 
   _launchURL(String sourceUrl) async {
     final Uri url = Uri.parse(sourceUrl);

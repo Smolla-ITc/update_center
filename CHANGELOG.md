@@ -1,3 +1,7 @@
+## 1.0.0-beta.2+1
+
+- Update dependencies.
+
 ## 1.0.0-beta.2
 
 ### *ATTENTION! There are a lot of breaking changes in this update!!*
