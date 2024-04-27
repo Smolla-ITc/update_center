@@ -1,3 +1,7 @@
+## 1.0.0-beta.2+2
+
+- Fixed display of widget "isNoUpdateAvailableToast".
+
 ## 1.0.0-beta.2+1
 
 - Update dependencies.

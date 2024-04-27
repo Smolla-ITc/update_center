@@ -65,13 +65,11 @@ class CheckProvider {
 
     // Returns your custom widget "No updates found"
     if (buildNumber >= model.versionCode) {
-      if (context.mounted &&
-          config.globalConfig.androidNoUpdateAvailableBuilder != null) {
+      if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.androidNoUpdateAvailableBuilder != null) {
         config.globalConfig.androidNoUpdateAvailableBuilder?.call(context);
       }
 
-      MemoryProvider
-          .deleteFileDirectory(); // Deletes the old file if there is no update
+      MemoryProvider.deleteFileDirectory(); // Deletes the old file if there is no update
       return false;
     }
 
@@ -117,8 +115,7 @@ class CheckProvider {
     }
 
     if (buildNumber >= model.versionCode) {
-      if (context.mounted &&
-          config.globalConfig.iosNoUpdateAvailableBuilder != null) {
+      if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.iosNoUpdateAvailableBuilder != null) {
         config.globalConfig.iosNoUpdateAvailableBuilder?.call(context);
       }
       return false;
@@ -180,11 +177,9 @@ class CheckProvider {
 
     if (buildNumber >= model.versionCode) {
       if (config.globalConfig.isNoUpdateAvailableToast) {
-        if (context.mounted &&
-            config.globalConfig.windowsNoUpdateAvailableBuilder != null) {
+        if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.windowsNoUpdateAvailableBuilder != null) {
           config.globalConfig.windowsNoUpdateAvailableBuilder?.call(context);
         }
-        // toast for windows
       }
       MemoryProvider.deleteFileDirectoryWindows();
       return false;

@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Center v1.0.0-beta.2'),
+        title: const Text('Update Center v1.0.0-beta.2+2'),
       ),
       body: Center(
           child: OutlinedButton(
@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
         config: UpdateCenterConfig(
             globalConfig: GlobalConfig(
                 isCheckStart: true, // Whether to check for updates when the app starts
-                isNoUpdateAvailableToast: true, // Whether to show a toast message if no updates are available
+                isNoUpdateAvailableToast: false, // Whether to show a toast message if no updates are available
                 isSourceUrl: false, // You can enable clicking a link instead of downloading a file
                 isRequestForNotifications: true, // Allows you to request notifications or not
                 isOpenFile: true, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
