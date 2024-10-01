@@ -33,7 +33,7 @@ class DownloadProvider {
 
     String fileName = '${tempDirectory.path}/${url.split('/').last}';
 
-    final contentLength = response.contentLength;
+    final contentLength = response.contentLength ?? 0;
 
     int bytesDownloaded = 0;
 
@@ -52,7 +52,7 @@ class DownloadProvider {
         fileStream.add(newBytes);
 
         // Calculate progress
-        double currentProgress = bytesDownloaded / contentLength!;
+        double currentProgress = bytesDownloaded / contentLength;
         onProgress(currentProgress);
 
         // Inside your download logic
@@ -62,10 +62,8 @@ class DownloadProvider {
             "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
-        if (currentProgress - lastNotifiedProgress >= 0.02 ||
-            currentProgress == 1.0) {
-          notificationProvider.showDownloadProgressNotification(
-              contentLength, bytesDownloaded, versionName);
+        if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
+          notificationProvider.showDownloadProgress(maxProgress: contentLength, progress: bytesDownloaded, versionName: versionName);
           lastNotifiedProgress = currentProgress;
         }
       },
@@ -88,8 +86,7 @@ class DownloadProvider {
         // Show notification about download failure
         notificationProvider.showGenericNotification(
             id: 3000,
-            title:
-                config.notificationConfig.downloadFailedNotificationTitleText,
+            title: config.notificationConfig.downloadFailedNotificationTitleText,
             body: config.notificationConfig.downloadFailedNotificationBodyText);
 
         log(e);
@@ -114,7 +111,7 @@ class DownloadProvider {
 
     String fileName = '${tempDirectory.path}/${url.split('/').last}';
 
-    final contentLength = response.contentLength;
+    final contentLength = response.contentLength ?? 0;
 
     int bytesDownloaded = 0;
 
@@ -130,21 +127,19 @@ class DownloadProvider {
         fileStream.add(newBytes);
 
         // Calculate progress
-        double currentProgress = bytesDownloaded / contentLength!;
+        double currentProgress = bytesDownloaded / contentLength;
         onProgress(currentProgress);
 
         // Inside your download logic
-        downloadState.progress.value =
-            currentProgress; // currentProgress is a value between 0.0 and 1.0
-        downloadState.progressText.value =
-            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+        downloadState.progress.value = currentProgress; // currentProgress is a value between 0.0 and 1.0
+        downloadState.progressText.value = "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
 
         // Throttle the notification update
-        if (currentProgress - lastNotifiedProgress >= 0.02 ||
-            currentProgress == 1.0) {
+        if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
           lastNotifiedProgress = currentProgress;
         }
       },
+
       onDone: () async {
         await fileStream.flush();
         await fileStream.close();

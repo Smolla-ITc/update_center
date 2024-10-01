@@ -1,3 +1,10 @@
+## 1.0.0
+# Release plugin
+- Rename name package to org.smollaitc.
+- Updated dependencies.
+- Fixed "null check operator used on a null value" in Windows and Android boot method.
+- License updated.
+
 ## 1.0.0-beta.2+2
 
 - Fixed display of widget "isNoUpdateAvailableToast".

@@ -5,8 +5,8 @@
 
 # IMPORTANT INFORMATION! ⚠
 
-## This plugin is under active development and many features have not yet been implemented. The plugin now works well with Android and Windows, you can now use the plugin for these platforms. IOS is partially implemented, but it can also work, but improvements are needed.
-I was not able to check the functionality of the IOS plugin, since I do not have access to an iPhone or Mac Book, but in theory it should work, you can simply check the functionality of the IOS plugin in your project and if you find errors, write a comment on the problems in the github project https://github.com/Smolla-ITc/update_center/issues.
+IOS is partially implemented, but it can also work, but improvements are needed.
+I was not able to check the functionality of the IOS plugin, since I do not have access to an iPhone or Mac Book, but in theory it should work, you can simply check the functionality of the IOS plugin in your project and if you find errors, write a comment about the problems in the project github https://github.com/Smolla-ITc/update_center/issues.
 
 # What has been implemented so far.
 
@@ -26,7 +26,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^1.0.0-beta.2+1
+  update_center: ^1.0.0
 ```
 
 ## Json file structure
@@ -105,24 +105,3 @@ Paste these lines into the file if you don't have them.
 ## Full plugin settings.
 
 Go to main file at this [link](https://github.com/Smolla-ITc/update_center/blob/main/example/lib/main.dart) to find out more.
-
-# Bonus code.
-To display progress in your code you need to add the following code:
-
-```dart
-     ValueListenableBuilder<double>(
-        valueListenable: downloadState.progress,
-            builder: (context, progress, _) {
-            return Row(
-            children: [
-            const SizedBox(width: 33),
-            Expanded(
-            child: LinearProgressIndicator(
-            value: progress == 0.0 ? null : progress,
-          ),
-         ),
-       ],
-     );
-   },
-  ),
-```

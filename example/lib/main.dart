@@ -11,13 +11,13 @@ void main() {
     // You don't have to do this to test Material dialogs
     DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: darkDynamic,
-          ),
-          home: const MyApp());
-    }),
+          return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                colorScheme: darkDynamic,
+              ),
+              home: const MyApp());
+        }),
   );
 }
 
@@ -50,14 +50,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Center v1.0.0-beta.2+2'),
+        title: const Text('Update Center v1.0.0'),
       ),
       body: Center(
           child: OutlinedButton(
-        onPressed: () =>
-            checkUpdate(), // You can check for updates using the button
-        child: const Text('Check update'),
-      )),
+            onPressed: () =>
+                checkUpdate(), // You can check for updates using the button
+            child: const Text('Check update'),
+          )),
     );
   }
 
@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
                 isNoUpdateAvailableToast: false, // Whether to show a toast message if no updates are available
                 isSourceUrl: false, // You can enable clicking a link instead of downloading a file
                 isRequestForNotifications: true, // Allows you to request notifications or not
-                isOpenFile: true, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
+                isOpenFile: false, // Determines whether to open an already downloaded file instead of downloading it again (This can be useful if you don't want users to download the file again)
 
                 // Widgets for displaying a notification about the unavailability of an update
                 androidNoUpdateAvailableBuilder: (BuildContext context) {
@@ -118,36 +118,35 @@ class _MyAppState extends State<MyApp> {
                                 onPressed: isDownloading
                                     ? null
                                     : () async {
-                                        downloadState.isDownloading.value =
-                                            false;
-                                        // Ensure the button does nothing while downloading
-                                        await OnDownload.initiateUpdate(
-                                          url: model.downloadUrl,
-                                          versionName: model.versionName,
-                                          config: config,
-                                          downloadState: downloadState,
-                                          sourceUrl: model.sourceUrl,
-                                          launchUrl: (url) => _launchURL(url),
-                                        );
-                                      },
+                                  downloadState.isDownloading.value = false;
+                                  // Ensure the button does nothing while downloading
+                                  await OnDownload.initiateUpdate(
+                                    url: model.downloadUrl,
+                                    versionName: model.versionName,
+                                    config: config,
+                                    downloadState: downloadState,
+                                    sourceUrl: model.sourceUrl,
+                                    launchUrl: (url) => _launchURL(url),
+                                  );
+                                },
                                 child: isDownloading
                                     ? ValueListenableBuilder<double>(
-                                        valueListenable: downloadState.progress,
-                                        builder: (context, progress, _) {
-                                          int progressValue =
-                                              (progress * 100).toInt();
-                                          return AnimatedFlipCounter(
-                                            suffix: '%',
-                                            duration: const Duration(
-                                                milliseconds: 500),
-                                            value: progressValue,
-                                            textStyle: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground),
-                                          );
-                                        },
-                                      )
+                                  valueListenable: downloadState.progress,
+                                  builder: (context, progress, _) {
+                                    int progressValue =
+                                    (progress * 100).toInt();
+                                    return AnimatedFlipCounter(
+                                      suffix: '%',
+                                      duration: const Duration(
+                                          milliseconds: 500),
+                                      value: progressValue,
+                                      textStyle: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
+                                    );
+                                  },
+                                )
                                     : const Text('Download'),
                               );
                             },
@@ -210,37 +209,37 @@ class _MyAppState extends State<MyApp> {
                                 onPressed: isDownloading
                                     ? null
                                     : () async {
-                                        // Disables the button so it doesn't cause new load calls when clicked
-                                        downloadState.isDownloading.value = false;
+                                  // Disables the button so it doesn't cause new load calls when clicked
+                                  downloadState.isDownloading.value = false;
 
-                                        // Download call
-                                        await OnDownload.initiateUpdate(
-                                          url: model.downloadUrl,
-                                          versionName: model.versionName,
-                                          config: config,
-                                          downloadState: downloadState,
-                                          sourceUrl: model.sourceUrl,
-                                          launchUrl: (url) => _launchURL(url),
-                                        );
-                                      },
+                                  // Download call
+                                  await OnDownload.initiateUpdate(
+                                    url: model.downloadUrl,
+                                    versionName: model.versionName,
+                                    config: config,
+                                    downloadState: downloadState,
+                                    sourceUrl: model.sourceUrl,
+                                    launchUrl: (url) => _launchURL(url),
+                                  );
+                                },
                                 child: isDownloading
                                     ? ValueListenableBuilder<double>(
-                                        valueListenable: downloadState.progress,
-                                        builder: (context, progress, _) {
-                                          int progressValue =
-                                              (progress * 100).toInt();
-                                          return AnimatedFlipCounter(
-                                            suffix: '%',
-                                            duration: const Duration(
-                                                milliseconds: 500),
-                                            value: progressValue,
-                                            textStyle: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground),
-                                          );
-                                        },
-                                      )
+                                  valueListenable: downloadState.progress,
+                                  builder: (context, progress, _) {
+                                    int progressValue =
+                                    (progress * 100).toInt();
+                                    return AnimatedFlipCounter(
+                                      suffix: '%',
+                                      duration: const Duration(
+                                          milliseconds: 500),
+                                      value: progressValue,
+                                      textStyle: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
+                                    );
+                                  },
+                                )
                                     : const Text('Download'),
                               );
                             },

@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.smollaitc" "\0"
+            VALUE "CompanyName", "org.smollaitc" "\0"
             VALUE "FileDescription", "update_center_example" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "update_center_example" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.smollaitc. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 org.smollaitc. All rights reserved." "\0"
             VALUE "OriginalFilename", "update_center_example.exe" "\0"
             VALUE "ProductName", "update_center_example" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

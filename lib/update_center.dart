@@ -1,5 +1,3 @@
-library update_center;
-
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -67,7 +65,7 @@ class UpdateCenter {
 
     try {
       // Fetch update information from the specified URL.
-      h.Response response = await h.get(Uri.parse(urlJson));
+      h.Response response = await h.get(Uri.parse(urlJson)).timeout(Duration(seconds: 30));
 
       // Handle cases where the response body is empty.
       if (response.body.isEmpty) {
