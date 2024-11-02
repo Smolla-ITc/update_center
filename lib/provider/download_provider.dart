@@ -33,9 +33,9 @@ class DownloadProvider {
 
     String fileName = '${tempDirectory.path}/${url.split('/').last}';
 
-    final contentLength = response.contentLength ?? 0;
+    final maxProgress = response.contentLength ?? 0;
 
-    int bytesDownloaded = 0;
+    int progress = 0;
 
     double lastNotifiedProgress = 0.0;
 
@@ -47,23 +47,23 @@ class DownloadProvider {
       (List<int> newBytes) {
         notificationProvider.cancelNotification(3000);
 
-        bytesDownloaded += newBytes.length;
+        progress += newBytes.length;
 
         fileStream.add(newBytes);
 
         // Calculate progress
-        double currentProgress = bytesDownloaded / contentLength;
+        double currentProgress = progress / maxProgress;
         onProgress(currentProgress);
 
         // Inside your download logic
         downloadState.progress.value =
             currentProgress; // currentProgress is a value between 0.0 and 1.0
         downloadState.progressText.value =
-            "${formatBytes(bytesDownloaded, 2)}/${formatBytes(contentLength, 2)}";
+            "${formatBytes(progress, 2)}/${formatBytes(maxProgress, 2)}";
 
         // Throttle the notification update
         if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
-          notificationProvider.showDownloadProgress(maxProgress: contentLength, progress: bytesDownloaded, versionName: versionName);
+          notificationProvider.showDownloadProgress(maxProgress, progress, versionName);
           lastNotifiedProgress = currentProgress;
         }
       },

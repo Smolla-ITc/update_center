@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Center v1.0.0'),
+        title: const Text('Update Center v1.1.0'),
       ),
       body: Center(
           child: OutlinedButton(
@@ -257,8 +257,8 @@ class _MyAppState extends State<MyApp> {
               downloadFailedNotificationTitleText: 'Download failed', // Title for the failed download notification
               downloadFailedNotificationBodyText: 'An error occurred while downloading update. Check your internet connections and try again', // Body text for the failed download notification
 
-              showProgress: true, // Whether to show download progress in the notification
-              channelShowBadge: true, // Whether to show a badge on the notification channel
+              showProgress: false, // Whether to show download progress in the notification
+              channelShowBadge: false, // Whether to show a badge on the notification channel
             )));
   }
 

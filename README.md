@@ -26,7 +26,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^1.0.0
+  update_center: ^1.0.2
 ```
 
 ## Json file structure

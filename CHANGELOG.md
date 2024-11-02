@@ -1,3 +1,7 @@
+## 1.0.2
+- Fixed notifications
+- Updated dependencies
+
 ## 1.0.0
 # Release plugin
 - Rename name package to org.smollaitc.

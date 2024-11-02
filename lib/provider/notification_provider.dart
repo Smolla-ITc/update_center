@@ -2,101 +2,70 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../config/config.dart';
 
 /// Notification IDs
-///
-/// 1000: Download notification
-/// 2000: Download complete
-/// 3000: Download failed
+const int downloadNotificationId = 1000;
+const int downloadCompleteId = 2000;
+const int downloadFailedId = 3000;
 
 class NotificationProvider {
   final UpdateCenterConfig config;
+  static final _plugin = FlutterLocalNotificationsPlugin();
 
-  const NotificationProvider({
-    required this.config,
-  });
+  const NotificationProvider({required this.config});
 
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-
-  /// Initialize notification plugin
   Future<void> initialize() async {
-    var initializationSettingsAndroid =
-    AndroidInitializationSettings(config.notificationConfig.defaultIcon);
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
+    var settings = InitializationSettings(
+      android: AndroidInitializationSettings(config.notificationConfig.defaultIcon),
     );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await _plugin.initialize(settings);
   }
 
-  /// Show notification with optional progress
   Future<void> showNotification({
     required int id,
     required String title,
     required String body,
-    String? versionName,
-    bool showProgress = false,
-    int maxProgress = 0,
-    int progress = 0,
-    bool isLowImportance = true,
-    bool channelShowBadge = true,
+    NotificationDetails? details,
   }) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    await _plugin.show(id, title, body, details);
+  }
+
+  Future<void> showDownloadProgress(int maxProgress, int progress, String versionName) async {
+    var androidDetails = AndroidNotificationDetails(
       'UpdateCenter',
       'Update Center',
       subText: versionName,
-      channelShowBadge: channelShowBadge,
-      importance: isLowImportance ? Importance.low : Importance.high,
-      priority: isLowImportance ? Priority.low : Priority.high,
+      channelShowBadge: config.notificationConfig.channelShowBadge,
+      importance: Importance.high,
+      priority: Priority.high,
       onlyAlertOnce: true,
-      showProgress: showProgress,
-      maxProgress: showProgress ? maxProgress : 0,
-      progress: showProgress ? progress : 0,
-    );
-
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-
-    await flutterLocalNotificationsPlugin.show(
-      id, // Notification ID
-      title,
-      body,
-      platformChannelSpecifics,
-    );
-  }
-
-  /// Show a download progress notification
-  Future<void> showDownloadProgress({
-    required int maxProgress,
-    required int progress,
-    required String versionName,
-  }) async {
-    await showNotification(
-      id: 1000,
-      title: config.notificationConfig.downloadProgressNotificationTextTitle,
-      body: config.notificationConfig.downloadProgressNotificationTextBody,
-      versionName: versionName,
-      showProgress: true,
+      showProgress: config.notificationConfig.showProgress,
       maxProgress: maxProgress,
       progress: progress,
     );
+    await showNotification(
+      id: downloadNotificationId,
+      title: config.notificationConfig.downloadProgressNotificationTextTitle,
+      body: config.notificationConfig.downloadProgressNotificationTextBody,
+      details: NotificationDetails(android: androidDetails),
+    );
   }
 
-  /// Show a generic notification (e.g., download failed, complete)
   Future<void> showGenericNotification({
     required int id,
     required String title,
     required String body,
   }) async {
-    await showNotification(
-      id: id,
-      title: title,
-      body: body,
-      showProgress: false,
+    var androidDetails = AndroidNotificationDetails(
+      'UpdateCenter',
+      'Update Center',
+      channelShowBadge: true,
+      importance: Importance.high,
+      priority: Priority.high,
+      onlyAlertOnce: true,
     );
+    await showNotification(id: id, title: title, body: body, details: NotificationDetails(android: androidDetails));
   }
 
-  /// Cancel a specific notification
   Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await _plugin.cancel(id);
   }
 }
