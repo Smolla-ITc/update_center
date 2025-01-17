@@ -1,6 +1,6 @@
 name: update_center
 description: "A package that allows you to implement your own update system for your application."
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/Smolla-ITc/update_center
 issue_tracker: https://github.com/Smolla-ITc/update_center/issues
 

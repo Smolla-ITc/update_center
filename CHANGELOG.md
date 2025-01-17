@@ -1,8 +1,12 @@
+## 2.0.1
+
+- Fixed Readme.
+
 ## 2.0.0
 
 # Major update
 - iOS support removed.
-- Notification support delete.
+- Notification support removed.
 - Updated dependencies.
 - Fixed minor bugs.
 - Other minor updates.

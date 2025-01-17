@@ -7,7 +7,6 @@
 
 - Create your own dialogues to suit your style.
 - Automatic update check depending on the platform the plugin runs on.
-- Show notifications about download progress and download errors.
 - The plugin can prevent skipping an update if the json code is higher than the local version code, preventing the dialog from closing.
 - The plugin can work with downloaded files. They will be deleted after the update is completed. Or if the user has not updated and by this time an update has been released, the plugin will delete the old file and download a new one, rather than start a new download and immediately open the file for update. This works on both Android and Windows. Download files are stored in Windows directories - the download folder “/Update Center/”. Android - memory cache folder. But soon the plugin itself will determine where to save the files depending on the importance of the update.
 - Once the download is complete, the files themselves open in supported formats. In Windows zip and exe and also any file. And Android is similar.
@@ -21,7 +20,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^2.0.0
+  update_center: ^2.0.1
 ```
 
 ## Json file structure
