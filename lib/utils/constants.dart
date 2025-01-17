@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:update_center/config/config.dart';
 import '../models/android.dart';
-import '../models/ios.dart';
 import '../models/windows.dart';
 import 'download_utils.dart';
 
@@ -17,16 +16,10 @@ Widget sizeHor(double width) {
   return SizedBox(width: width);
 }
 
+
 typedef AndroidDialogBuilder = Future<void> Function(
     BuildContext context,
     AndroidModel model,
-    UpdateCenterConfig updateCenterConfig,
-    DownloadState downloadState,
-    bool allowSkip);
-
-typedef IOSDialogBuilder = Future<void> Function(
-    BuildContext context,
-    IOSModel model,
     UpdateCenterConfig updateCenterConfig,
     DownloadState downloadState,
     bool allowSkip);

@@ -13,7 +13,7 @@ class OnDownload {
     required Future<void> Function(String url) launchUrl,
     String? sourceUrl,
   }) async {
-    if (config.globalConfig.isOpenFile) {
+    if (config.globalConfig.openingFile) {
       File localFile;
       if (Platform.isWindows) {
         localFile = await MemoryProvider.getLocalFileWindows(url);
@@ -34,7 +34,7 @@ class OnDownload {
     }
 
     // Next, check if the source URL should be launched instead of downloading
-    if (config.globalConfig.isSourceUrl && sourceUrl != null) {
+    if (config.globalConfig.sourceUrl && sourceUrl != null) {
       await launchUrl(sourceUrl);
       return;
     }

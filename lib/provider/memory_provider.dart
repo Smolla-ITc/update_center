@@ -51,7 +51,6 @@ class MemoryProvider {
     }
   }
 
-
   /// Provides the UpdateCenter directory in the application's documents directory for Android.
   /// Creates the directory if it doesn't exist.
   static Future<Directory> directoryAndroid() async {

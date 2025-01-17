@@ -1,12 +1,7 @@
 # ![UpdateCenter Icon](https://raw.githubusercontent.com/Smolla-ITc/update_center/main/assets/ic_uc.png) Update Center
 [![Pub Version](https://img.shields.io/pub/v/update_center?color=orange)](https://pub.dev/packages/update_center)
 
-## Flutter plugin that allows you to implement multi-check for updates for different platforms Android, IOS, Windows.
-
-# IMPORTANT INFORMATION! ⚠
-
-IOS is partially implemented, but it can also work, but improvements are needed.
-I was not able to check the functionality of the IOS plugin, since I do not have access to an iPhone or Mac Book, but in theory it should work, you can simply check the functionality of the IOS plugin in your project and if you find errors, write a comment about the problems in the project github https://github.com/Smolla-ITc/update_center/issues.
+## Flutter plugin that allows you to implement multi-check for updates for different platforms Android, Windows.
 
 # What has been implemented so far.
 
@@ -26,7 +21,7 @@ The plugin works with a Json file so make sure you have somewhere to place this 
 
 ```yaml
 dependencies:
-  update_center: ^1.0.2
+  update_center: ^2.0.0
 ```
 
 ## Json file structure
@@ -37,14 +32,6 @@ dependencies:
     "versionName": "1.1.0",
     "downloadUrl": "https://example.com/UpdateCenter/app.apk",
     "changeLog": "- bug fixed; \n- new ui;",
-    "sourceUrl": "https://example.com/",
-    "versionCode": 2,
-    "minSupport": 1
-  },
-
-  "ios": {
-    "versionName": "1.1.0",
-    "changeLog": "- Bug fixes and performance improvements. \n- new ui",
     "sourceUrl": "https://example.com/",
     "versionCode": 2,
     "minSupport": 1
@@ -71,14 +58,6 @@ dependencies:
         "sourceUrl": "https://example.com/", // URL to the source or more information about the update
         "versionCode": 2, // Integer representing the new version code for Android
         "minSupport": 1 // Minimum supported version code; devices with a lower version code will be forced to update
-    },
-
-    "ios": {
-        "versionName": "1.1.0", // String representing the new version name for iOS
-        "changeLog": "- Bug fixes and performance improvements. \n- new ui", // Change log for iOS version
-        "sourceUrl": "https://example.com/", // URL for more information or source for the iOS update
-        "versionCode": 2, // Integer representing the new version code for iOS
-        "minSupport": 1 // Minimum supported version code for iOS
     },
 
     "windows": {

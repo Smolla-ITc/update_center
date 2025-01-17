@@ -3,7 +3,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../config/config.dart';
 import '../utils/download_utils.dart';
 import '../models/android.dart';
-import '../models/ios.dart';
 import '../models/windows.dart';
 import 'memory_provider.dart';
 
@@ -51,75 +50,30 @@ class CheckProvider {
       if (context.mounted && config.globalConfig.androidDialogBuilder != null) {
         await config.globalConfig.androidDialogBuilder!(
           context,
-          model, // Assume this is your AndroidModel instance with update info
+          model,
           config,
-          downloadState, // Your DownloadState instance
+          downloadState,
           allowSkip,
         );
       }
 
-      downloadUrl = model.downloadUrl; // Set the download URL
+      downloadUrl = model.downloadUrl;
 
       return true; // Return true to indicate that an update is available
     }
 
     // Returns your custom widget "No updates found"
     if (buildNumber >= model.versionCode) {
-      if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.androidNoUpdateAvailableBuilder != null) {
-        config.globalConfig.androidNoUpdateAvailableBuilder?.call(context);
+      if (config.globalConfig.noUpdateAvailableToast) {
+        if (config.globalConfig.androidNoUpdateAvailableBuilder != null) {
+          config.globalConfig.androidNoUpdateAvailableBuilder?.call(context);
+        }
       }
 
       MemoryProvider.deleteFileDirectory(); // Deletes the old file if there is no update
       return false;
     }
 
-    return false; // No update available
-  }
-
-  /// Checks for an available update for iOS platform and shows update dialog if necessary.
-  Future<bool> checkIOSUpdate(
-    Map<String, dynamic> iosData,
-    PackageInfo packageInfo,
-    bool allowSkip,
-    BuildContext context,
-    DownloadState downloadState,
-    UpdateCenterConfig config,
-    String downloadUrl, // This value is not used in the iOS model
-  ) async {
-    IOSModel model = IOSModel(
-      iosData['versionName'],
-      iosData['changeLog'],
-      iosData['sourceUrl'],
-      iosData['versionCode'],
-      iosData['minSupport'],
-    );
-
-    int buildNumber = int.parse(packageInfo.buildNumber);
-
-    if (model.minSupport > buildNumber) {
-      allowSkip = false; // Update is mandatory
-    }
-
-    // Check if the current build number is less than the update version code
-    if (buildNumber < model.versionCode) {
-      if (context.mounted && config.globalConfig.iosDialogBuilder != null) {
-        await config.globalConfig.iosDialogBuilder!(
-            context,
-            model, // Assume this is your AndroidModel instance with update info
-            config,
-            downloadState, // Your DownloadState instance
-            allowSkip);
-      }
-
-      return true; // Return true to indicate that an update is available
-    }
-
-    if (buildNumber >= model.versionCode) {
-      if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.iosNoUpdateAvailableBuilder != null) {
-        config.globalConfig.iosNoUpdateAvailableBuilder?.call(context);
-      }
-      return false;
-    }
     return false; // No update available
   }
 
@@ -176,8 +130,8 @@ class CheckProvider {
     }
 
     if (buildNumber >= model.versionCode) {
-      if (config.globalConfig.isNoUpdateAvailableToast) {
-        if (config.globalConfig.isNoUpdateAvailableToast && config.globalConfig.windowsNoUpdateAvailableBuilder != null) {
+      if (config.globalConfig.noUpdateAvailableToast) {
+        if (config.globalConfig.windowsNoUpdateAvailableBuilder != null) {
           config.globalConfig.windowsNoUpdateAvailableBuilder?.call(context);
         }
       }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:open_filex/open_filex.dart';
 import 'package:http/http.dart' as h;
 import 'package:update_center/provider/memory_provider.dart';
-import 'package:update_center/provider/notification_provider.dart';
 import 'package:update_center/config/config.dart';
 import '../utils/download_utils.dart';
 
@@ -25,7 +24,7 @@ class DownloadProvider {
   ) async {
     downloadState.isDownloading.value = true;
 
-    var notificationProvider = NotificationProvider(config: config);
+    // var notificationProvider = NotificationProvider(config: config);
 
     var response = await h.Client().send(h.Request('GET', Uri.parse(url)));
 
@@ -45,7 +44,7 @@ class DownloadProvider {
 
     response.stream.listen(
       (List<int> newBytes) {
-        notificationProvider.cancelNotification(3000);
+        // notificationProvider.cancelNotification(3000);
 
         progress += newBytes.length;
 
@@ -56,21 +55,19 @@ class DownloadProvider {
         onProgress(currentProgress);
 
         // Inside your download logic
-        downloadState.progress.value =
-            currentProgress; // currentProgress is a value between 0.0 and 1.0
-        downloadState.progressText.value =
-            "${formatBytes(progress, 2)}/${formatBytes(maxProgress, 2)}";
+        downloadState.progress.value = currentProgress; // currentProgress is a value between 0.0 and 1.0
+        downloadState.progressText.value = "${formatBytes(progress, 2)}/${formatBytes(maxProgress, 2)}";
 
         // Throttle the notification update
         if (currentProgress - lastNotifiedProgress >= 0.02 || currentProgress == 1.0) {
-          notificationProvider.showDownloadProgress(maxProgress, progress, versionName);
+          // notificationProvider.showDownloadProgress(maxProgress, progress, versionName);
           lastNotifiedProgress = currentProgress;
         }
       },
       onDone: () async {
         await fileStream.flush();
         await fileStream.close();
-        notificationProvider.cancelNotification(1000);
+        // notificationProvider.cancelNotification(1000);
 
         await OpenFilex.open(fileName);
 
@@ -81,13 +78,17 @@ class DownloadProvider {
 
         downloadState.isDownloading.value = false;
 
-        notificationProvider.cancelNotification(1000);
+
+
+        // notificationProvider.cancelNotification(1000);
 
         // Show notification about download failure
-        notificationProvider.showGenericNotification(
-            id: 3000,
-            title: config.notificationConfig.downloadFailedNotificationTitleText,
-            body: config.notificationConfig.downloadFailedNotificationBodyText);
+
+
+        // notificationProvider.showGenericNotification(
+        //     id: 3000,
+        //     title: config.notificationConfig.downloadFailedNotificationTitleText,
+        //     body: config.notificationConfig.downloadFailedNotificationBodyText);
 
         log(e);
       },

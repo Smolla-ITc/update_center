@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as h;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:update_center/provider/check_provider.dart';
-import 'package:update_center/provider/notification_provider.dart';
-import 'package:update_center/provider/permission_provider.dart';
 import 'utils/download_utils.dart';
 import 'config/config.dart';
 
 export 'config/config.dart';
 export 'utils/constants.dart';
 export 'models/android.dart';
-export 'models/ios.dart';
 export 'models/windows.dart';
 export 'provider/memory_provider.dart';
 export 'provider/download_provider.dart';
@@ -35,19 +32,15 @@ class UpdateCenter {
   }) {
     WidgetsFlutterBinding.ensureInitialized();
 
-    if (config.globalConfig.isRequestForNotifications) {
-      PermissionProvider.requestForNotifications();
-    }
-
     // If set in config, automatically check for updates after the first frame is rendered.
-    if (config.globalConfig.isCheckStart) {
+    if (config.globalConfig.checkStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         check();
       });
     }
     // Initialize notification provider with the configuration.
-    var notificationProvider = NotificationProvider(config: config);
-    notificationProvider.initialize();
+    // var notificationProvider = NotificationProvider(config: config);
+    // notificationProvider.initialize();
   }
 
   final BuildContext context;
@@ -88,17 +81,6 @@ class UpdateCenter {
               downloadState,
               config,
               _downloadUrl,
-            );
-
-          case "ios":
-            return CheckProvider().checkIOSUpdate(
-              data["ios"],
-              packageInfo,
-              allowSkip,
-              context,
-              downloadState, // This value is not used in the iOS model
-              config,
-              _downloadUrl, // This value is not used in the iOS model
             );
 
           case "windows":
